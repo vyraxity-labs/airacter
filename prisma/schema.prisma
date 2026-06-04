@@ -1,0 +1,229 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts       Account[]
+  sessions       Session[]
+  characters     Character[]
+  characterSaves CharacterSave[]
+  chats          Chat[]
+  transactions   TokenTransaction[]
+  reports        CharacterReport[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum AvatarType {
+  emoji
+  initials
+  image
+}
+
+enum Visibility {
+  private
+  public
+}
+
+enum Category {
+  education
+  productivity
+  entertainment
+  wellness
+  creative
+  technical
+  fun
+  other
+}
+
+model Character {
+  id           String     @id @default(cuid())
+  slug         String     @unique
+  name         String
+  description  String     @db.VarChar(200)
+  systemPrompt String     @db.VarChar(2000)
+  avatarType   AvatarType @default(emoji)
+  avatarValue  String
+  avatarColor  String     @default("#0ea5e9")
+  tone         String[]
+  category     Category   @default(other)
+  visibility   Visibility @default(private)
+  isVerified   Boolean    @default(false)
+  isFeatured   Boolean    @default(false)
+  usageCount   Int        @default(0)
+  saveCount    Int        @default(0)
+  createdBy    String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  creator User              @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  chats   Chat[]
+  saves   CharacterSave[]
+  reports CharacterReport[]
+}
+
+model CharacterSave {
+  id          String   @id @default(cuid())
+  userId      String
+  characterId String
+  savedAt     DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, characterId])
+}
+
+model Chat {
+  id                   String   @id @default(cuid())
+  title                String?
+  userId               String
+  characterId          String
+  systemPromptSnapshot String   @db.VarChar(2000)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@index([userId])
+  @@index([characterId])
+}
+
+enum MessageRole {
+  user
+  assistant
+}
+
+enum Feedback {
+  up
+  down
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  chatId    String
+  role      MessageRole
+  content   String      @db.Text
+  feedback  Feedback?
+  createdAt DateTime    @default(now())
+
+  chat        Chat              @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  transaction TokenTransaction?
+
+  @@index([chatId])
+}
+
+enum TransactionType {
+  credit_welcome
+  credit_purchase
+  debit_message
+  credit_admin
+  debit_refund
+}
+
+enum Direction {
+  credit
+  debit
+}
+
+model TokenTransaction {
+  id          String          @id @default(cuid())
+  userId      String
+  type        TransactionType
+  direction   Direction
+  amount      Int
+  referenceId String?         @unique
+  metadata    Json            @default("{}")
+  createdAt   DateTime        @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message Message? @relation(fields: [referenceId], references: [id], onDelete: SetNull)
+}
+
+enum ReportCategory {
+  harmful
+  spam
+  nsfw
+  misinformation
+  other
+}
+
+enum ReportStatus {
+  pending
+  resolved
+  dismissed
+}
+
+model CharacterReport {
+  id          String         @id @default(cuid())
+  characterId String
+  reportedBy  String
+  category    ReportCategory
+  notes       String?        @db.Text
+  status      ReportStatus   @default(pending)
+  createdAt   DateTime       @default(now())
+
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [reportedBy], references: [id], onDelete: Cascade)
+}
