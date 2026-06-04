@@ -52,6 +52,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -60,6 +61,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -142,6 +145,9 @@ model Chat {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
   messages  Message[]
+
+  @@index([userId])
+  @@index([characterId])
 }
 
 enum MessageRole {
@@ -164,6 +170,8 @@ model Message {
 
   chat        Chat              @relation(fields: [chatId], references: [id], onDelete: Cascade)
   transaction TokenTransaction?
+
+  @@index([chatId])
 }
 
 enum TransactionType {
