@@ -3,7 +3,7 @@ import { SignJWT, jwtVerify } from "jose";
 const getJwtSecret = () => {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === "production" && !process.env.NEXT_PHASE?.includes("build")) {
       throw new Error("JWT_SECRET environment variable is missing in production.");
     }
     return new TextEncoder().encode("dev_secret_jwt_123456789_airacter_mobile_rest");

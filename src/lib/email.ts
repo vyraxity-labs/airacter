@@ -61,6 +61,6 @@ export async function sendVerificationEmail(email: string, token: string) {
     return true;
   } catch (error) {
     console.error("Failed to send verification email:", error);
-    throw new Error("Failed to send verification email. Please check your credentials.");
+    throw new Error("Failed to send verification email. Please try again later.");
   }
 }

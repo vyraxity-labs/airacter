@@ -68,7 +68,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("Verification API error:", error);
     return NextResponse.json(
-      { error: error.message || "An unexpected error occurred during email verification." },
+      { error: "An unexpected error occurred during email verification." },
       { status: 500 }
     );
   }
