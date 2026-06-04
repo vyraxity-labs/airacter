@@ -10,11 +10,21 @@ const { auth: nextAuthMiddleware } = NextAuth(authConfig);
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Prevent header spoofing by stripping custom user context headers from the incoming request
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete("x-user-id");
+  requestHeaders.delete("x-user-email");
+  requestHeaders.delete("x-user-role");
+
   // 1. API Route Protection & User Forwarding
   if (pathname.startsWith("/api")) {
     // Skip verification check on auth API routes
     if (pathname.startsWith("/api/auth")) {
-      return NextResponse.next();
+      return NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     }
 
     const authHeader = request.headers.get("authorization");
@@ -30,8 +40,7 @@ export async function proxy(request: NextRequest) {
         );
       }
 
-      // Forward authenticated user context via headers
-      const requestHeaders = new Headers(request.headers);
+      // Forward verified mobile user contexts
       requestHeaders.set("x-user-id", decoded.userId);
       requestHeaders.set("x-user-email", decoded.email);
       requestHeaders.set("x-user-role", decoded.role);
@@ -48,7 +57,6 @@ export async function proxy(request: NextRequest) {
     
     if (session && session.auth?.user) {
       const user = session.auth.user;
-      const requestHeaders = new Headers(request.headers);
       requestHeaders.set("x-user-id", user.id || "");
       requestHeaders.set("x-user-email", user.email || "");
       requestHeaders.set("x-user-role", (user as any).role || "USER");
@@ -60,11 +68,15 @@ export async function proxy(request: NextRequest) {
       });
     }
 
-    // Let API routes pass through. Handlers will check headers for x-user-id if protection is required.
-    return NextResponse.next();
+    // Let API routes pass through with stripped headers.
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
-  // 2. Web Page Protection
+  // 2. Web Page Protection (NextAuth edge validation)
   return (nextAuthMiddleware as any)(request);
 }
 
