@@ -30,6 +30,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (!user || !user.password) {
+          // Perform a dummy comparison to mitigate timing attacks / email enumeration
+          await bcrypt.compare(password, "$2a$12$Kb9R9b6W6v8u7t6s5r4e3u2i1o0p9a8s7d6f5g4h3j2k1l0z9x8c7");
           return null;
         }
 

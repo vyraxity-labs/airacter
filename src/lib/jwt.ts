@@ -1,8 +1,17 @@
 import { SignJWT, jwtVerify } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "dev_secret_jwt_123456789_airacter_mobile_rest"
-);
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production" && !process.env.NEXT_PHASE?.includes("build")) {
+      throw new Error("JWT_SECRET environment variable is missing in production.");
+    }
+    return new TextEncoder().encode("dev_secret_jwt_123456789_airacter_mobile_rest");
+  }
+  return new TextEncoder().encode(secret);
+};
+
+const JWT_SECRET = getJwtSecret();
 
 export interface TokenPayload {
   userId: string;
