@@ -101,6 +101,9 @@
   --ring: #0ea5e9;
   
   --radius: 0.75rem;
+
+  --btn-gradient-start: #0ea5e9;
+  --btn-gradient-end: #7c3aed;
 }
 
 .dark {
@@ -108,16 +111,16 @@
   --background: #0b1326;
   --foreground: #dae2fd;
   
-  --primary: #0ea5e9; /* Teal primary */
-  --primary-foreground: #ffffff;
-  --primary-container: #00344d;
+  --primary: #89ceff; /* Match Stitch: primary */
+  --primary-foreground: #00344d; /* Match Stitch: on-primary */
+  --primary-container: #0ea5e9; /* Match Stitch: primary-container */
   
-  --secondary: #7c3aed; /* Purple secondary */
-  --secondary-foreground: #ffffff;
-  --secondary-container: #3f008e;
+  --secondary: #d2bbff; /* Match Stitch: secondary */
+  --secondary-foreground: #3f008e; /* Match Stitch: on-secondary */
+  --secondary-container: #6001d1; /* Match Stitch: secondary-container */
   
   --tertiary: #ffafd3;
-  --tertiary-container: #620040;
+  --tertiary-container: #f06eb2; /* Match Stitch: tertiary-container */
   
   --surface: #0b1326;
   --surface-dim: #0b1326;
@@ -138,9 +141,9 @@
   --error: #ffb4ab;
   --on-error: #690005;
 
-  --glass-bg: rgba(23, 31, 51, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: 16px;
+  --glass-bg: rgba(23, 31, 51, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: 12px;
 
   /* shadcn UI defaults */
   --card: #171f33;
@@ -153,9 +156,12 @@
   --accent-foreground: #dae2fd;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #0ea5e9;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #89ceff;
+
+  --btn-gradient-start: #0ea5e9;
+  --btn-gradient-end: #6001d1;
 }
 
 body {
@@ -187,13 +193,16 @@ body {
 
 /* Gradient effects button style */
 .btn-gradient {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--btn-gradient-start) 0%, var(--btn-gradient-end) 100%);
   color: #ffffff;
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  transition: opacity 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
 }
 
 .btn-gradient:hover {
-  opacity: 0.92;
+  opacity: 0.95;
+  box-shadow: 0 0 30px rgba(14, 165, 233, 0.5);
+  transform: translateY(-1px);
 }
 
 .btn-gradient:active {

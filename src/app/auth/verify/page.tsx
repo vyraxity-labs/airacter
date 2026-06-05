@@ -86,8 +86,8 @@ function VerifyContent() {
             <Link
               href="/auth/login?verified=true"
               className={cn(
-                buttonVariants({ variant: "default" }),
-                "h-12 w-full rounded-xl font-semibold btn-gradient text-white active:scale-98 transition-all shadow-md shadow-primary/10 cursor-pointer flex items-center justify-center"
+                buttonVariants({ variant: "gradient" }),
+                "h-12 w-full rounded-2xl font-semibold cursor-pointer flex items-center justify-center"
               )}
             >
               Continue to Login
@@ -108,8 +108,8 @@ function VerifyContent() {
               <Link
                 href="/auth/register"
                 className={cn(
-                  buttonVariants({ variant: "default" }),
-                  "h-12 w-full rounded-xl font-semibold btn-gradient text-white active:scale-98 transition-all shadow-md shadow-primary/10 cursor-pointer flex items-center justify-center"
+                  buttonVariants({ variant: "gradient" }),
+                  "h-12 w-full rounded-2xl font-semibold cursor-pointer flex items-center justify-center"
                 )}
               >
                 Back to Registration

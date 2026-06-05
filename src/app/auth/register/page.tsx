@@ -198,7 +198,8 @@ export default function RegisterPage() {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="h-12 w-full rounded-xl text-white font-semibold btn-gradient flex items-center justify-center gap-2 active:scale-98 transition-all disabled:opacity-50 cursor-pointer shadow-md shadow-primary/10 mt-6"
+                    variant="gradient"
+                    className="h-12 w-full rounded-2xl font-semibold flex items-center justify-center gap-2 mt-6 cursor-pointer"
                   >
                     <span>{loading ? "Creating Account..." : "Create Account"}</span>
                     {!loading && <ArrowRight size={16} />}
