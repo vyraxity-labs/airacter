@@ -53,13 +53,38 @@ export async function proxy(request: NextRequest) {
     }
 
     // Fallback: Check if there's an active NextAuth web session
+    let userId = "";
+    let userEmail = "";
+    let userRole = "USER";
+
     const session = await (nextAuthMiddleware as any)(request);
-    
     if (session && session.auth?.user) {
       const user = session.auth.user;
-      requestHeaders.set("x-user-id", user.id || "");
-      requestHeaders.set("x-user-email", user.email || "");
-      requestHeaders.set("x-user-role", (user as any).role || "USER");
+      userId = user.id || "";
+      userEmail = user.email || "";
+      userRole = (user as any).role || "USER";
+    } else {
+      // Robust secondary fallback: decode token directly from cookies
+      try {
+        const { getToken } = await import("next-auth/jwt");
+        const token = await getToken({
+          req: request,
+          secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+        });
+        if (token) {
+          userId = (token.id as string) || (token.sub as string) || "";
+          userEmail = token.email || "";
+          userRole = (token.role as string) || "USER";
+        }
+      } catch (err) {
+        console.error("Failed to extract token via getToken fallback:", err);
+      }
+    }
+
+    if (userId) {
+      requestHeaders.set("x-user-id", userId);
+      requestHeaders.set("x-user-email", userEmail);
+      requestHeaders.set("x-user-role", userRole);
 
       return NextResponse.next({
         request: {
