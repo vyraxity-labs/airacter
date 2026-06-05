@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Geist } from "next/font/google";
 import { ThemeProvider, themeScript } from "@/components/theme-provider";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Airacter — Persona Chat Platform",
@@ -19,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={cn("h-full", "antialiased", "font-sans", geist.variable)}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
