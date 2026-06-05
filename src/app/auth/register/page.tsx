@@ -89,7 +89,7 @@ export default function RegisterPage() {
                   <p className="text-xs text-on-surface-variant leading-relaxed">Persistent prompts with rich contextual reasoning.</p>
                 </CardContent>
               </Card>
-              <Card className="glass-panel border-0 ring-0 p-5 rounded-xl space-y-2 mt-4 text-left bg-glass-bg/60">
+              <Card className="glass-panel border-0 ring-0 p-5 rounded-xl space-y-2 text-left bg-glass-bg/60">
                 <CardContent className="p-0 space-y-2">
                   <User size={24} className="text-secondary" />
                   <h3 className="font-semibold text-sm text-foreground">Character Hub</h3>

@@ -7,6 +7,7 @@ import { Sparkles, CheckCircle, AlertCircle, Loader } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { STARTING_TOKEN } from "@/lib/constants";
 
 function VerifyContent() {
   const searchParams = useSearchParams();
@@ -41,6 +42,7 @@ function VerifyContent() {
           setSuccess(true);
         }
       } catch (err) {
+        console.error("Email verification failed:", err);
         setError("A network error occurred. Please try again.");
       } finally {
         setLoading(false);
@@ -75,7 +77,7 @@ function VerifyContent() {
             <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl max-w-xs w-full">
               <p className="text-xs font-bold text-primary tracking-wider uppercase mb-1">Signup Bonus Credited</p>
               <p className="text-lg font-extrabold text-foreground flex items-center justify-center gap-1">
-                <Sparkles size={18} className="text-primary" /> +50,000 Tokens
+                <Sparkles size={18} className="text-primary" /> +{STARTING_TOKEN} Tokens
               </p>
             </div>
             

@@ -62,6 +62,7 @@ function LoginContent() {
         router.refresh();
       }
     } catch (err: any) {
+      console.error("An unexpected error occurred during login:", err);
       setError("An unexpected error occurred during login.");
     } finally {
       setLoading(false);
