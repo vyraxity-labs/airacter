@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { STARTING_TOKEN } from "./constants";
 
 const getTransporter = () => {
   const host = process.env.SMTP_HOST || "smtp-relay.brevo.com";
@@ -31,7 +32,7 @@ export async function sendVerificationEmail(email: string, token: string) {
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
       <h2 style="color: #0ea5e9; text-align: center;">Welcome to Airacter</h2>
-      <p>Thank you for registering. Please click the button below to verify your email address and activate your account. You will receive 50,000 free tokens upon verification!</p>
+      <p>Thank you for registering. Please click the button below to verify your email address and activate your account. You will receive ${STARTING_TOKEN} free tokens upon verification!</p>
       <div style="text-align: center; margin: 30px 0;">
         <a href="${verificationLink}" style="background-color: #0ea5e9; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Verify Email Address</a>
       </div>
