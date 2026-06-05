@@ -55,8 +55,8 @@ export async function GET(request: Request) {
   const page = searchParams.get("page") || "1";
   const limit = searchParams.get("limit") || "9";
 
-  const pageNum = parseInt(page, 10);
-  const limitNum = parseInt(limit, 10);
+  const pageNum = Math.max(1, parseInt(page, 10) || 1)
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 9))
   const skip = (pageNum - 1) * limitNum;
 
   try {
@@ -65,8 +65,38 @@ export async function GET(request: Request) {
     if (scope === "my") {
       where.createdBy = userId;
     } else if (scope === "saved") {
+      const characterWhere: any = {
+        AND: [
+          {
+            OR: [
+              { visibility: "public" },
+              { createdBy: userId }
+            ]
+          }
+        ]
+      };
+
+      if (category) {
+        const parsedCategory = CategoryEnum.safeParse(category);
+        if (parsedCategory.success) {
+          characterWhere.AND.push({ category: parsedCategory.data });
+        }
+      }
+
+      if (q) {
+        characterWhere.AND.push({
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { description: { contains: q, mode: "insensitive" } }
+          ]
+        });
+      }
+
       const saved = await db.characterSave.findMany({
-        where: { userId },
+        where: {
+          userId,
+          character: characterWhere
+        },
         include: {
           character: {
             include: {
@@ -85,7 +115,12 @@ export async function GET(request: Request) {
         take: limitNum
       });
 
-      const totalSaves = await db.characterSave.count({ where: { userId } });
+      const totalSaves = await db.characterSave.count({
+        where: {
+          userId,
+          character: characterWhere
+        }
+      });
       const totalPages = Math.ceil(totalSaves / limitNum);
 
       return NextResponse.json({
@@ -98,7 +133,12 @@ export async function GET(request: Request) {
     }
 
     if (category) {
-      where.category = category;
+      const parsedCategory = CategoryEnum.safeParse(category);
+      if (parsedCategory.success) {
+        where.category = parsedCategory.data;
+      } else {
+        return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+      }
     }
 
     if (q) {

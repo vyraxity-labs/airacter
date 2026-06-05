@@ -24,6 +24,10 @@ export async function POST(
       return NextResponse.json({ error: "Character not found" }, { status: 404 });
     }
 
+    if (character.visibility === "private" && character.createdBy !== userId) {
+      return NextResponse.json({ error: "Forbidden: This character is private" }, { status: 403 });
+    }
+
     try {
       await db.$transaction([
         db.characterSave.create({
