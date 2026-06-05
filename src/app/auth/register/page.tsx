@@ -112,12 +112,13 @@ export default function RegisterPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider">Full Name</label>
+                  <label className="text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider" htmlFor="fullname">Full Name</label>
                   <div className="relative group">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/70 group-focus-within:text-primary transition-colors">
                       <User size={16} />
                     </span>
                     <input
+                    id="fullname"
                       type="text"
                       placeholder="John Doe"
                       value={name}
@@ -130,12 +131,13 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider">Email Address</label>
+                  <label className="text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider" htmlFor="email">Email Address</label>
                   <div className="relative group">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/70 group-focus-within:text-primary transition-colors">
                       <Mail size={16} />
                     </span>
                     <input
+                    id="email"
                       type="email"
                       placeholder="name@company.com"
                       value={email}
@@ -149,8 +151,9 @@ export default function RegisterPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider">Password</label>
+                    <label className="text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider" htmlFor="password">Password</label>
                     <input
+                    id="password"
                       type="password"
                       placeholder="••••••••"
                       value={password}
@@ -161,8 +164,9 @@ export default function RegisterPage() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider">Confirm</label>
+                    <label className="text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider" htmlFor="confirmPassword">Confirm Password</label>
                     <input
+                    id="confirmPassword"  
                       type="password"
                       placeholder="••••••••"
                       value={confirmPassword}

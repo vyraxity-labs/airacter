@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { STARTING_TOKEN } from "@/lib/constants";
 
 export async function POST(request: Request) {
   try {
@@ -42,15 +43,15 @@ export async function POST(request: Request) {
         },
       });
 
-      // Credit welcome tokens (50,000 tokens signup bonus)
+      // Credit welcome tokens
       await tx.tokenTransaction.create({
         data: {
           userId: user.id,
           type: "credit_welcome",
           direction: "credit",
-          amount: 50000,
+          amount: STARTING_TOKEN,
           metadata: {
-            reason: "Welcome signup bonus",
+            reason: "Welcome bonus",
           },
         },
       });
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(
-      { message: "Email verified successfully. 50,000 welcome tokens have been credited to your balance." },
+      { message: `Email verified successfully. ${STARTING_TOKEN} welcome tokens have been credited to your balance.` },
       { status: 200 }
     );
   } catch (error: any) {
