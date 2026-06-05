@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   /* System Font Families */
@@ -47,13 +51,15 @@
   --background: #f8fafc;
   --foreground: #0f172a;
   
-  --primary: #0ea5e9; /* Sky blue / Teal override */
+  --primary: #0ea5e9; /* Sky blue / Teal */
+  --primary-foreground: #ffffff;
   --primary-container: #e0f2fe;
   
-  --secondary: #7c3aed; /* Violet override */
+  --secondary: #7c3aed; /* Violet */
+  --secondary-foreground: #ffffff;
   --secondary-container: #f3e8ff;
   
-  --tertiary: #f472b6; /* Pink override */
+  --tertiary: #f472b6; /* Pink */
   --tertiary-container: #fce7f3;
   
   --surface: #ffffff;
@@ -78,6 +84,23 @@
   --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(148, 163, 184, 0.15);
   --glass-blur: 12px;
+
+  /* shadcn UI defaults */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #0ea5e9;
+  
+  --radius: 0.75rem;
 }
 
 .dark {
@@ -86,9 +109,11 @@
   --foreground: #dae2fd;
   
   --primary: #0ea5e9; /* Teal primary */
+  --primary-foreground: #ffffff;
   --primary-container: #00344d;
   
   --secondary: #7c3aed; /* Purple secondary */
+  --secondary-foreground: #ffffff;
   --secondary-container: #3f008e;
   
   --tertiary: #ffafd3;
@@ -116,6 +141,21 @@
   --glass-bg: rgba(23, 31, 51, 0.7);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-blur: 16px;
+
+  /* shadcn UI defaults */
+  --card: #171f33;
+  --card-foreground: #dae2fd;
+  --popover: #131b2e;
+  --popover-foreground: #dae2fd;
+  --muted: #171f33;
+  --muted-foreground: #bec8d2;
+  --accent: #222a3d;
+  --accent-foreground: #dae2fd;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #0ea5e9;
 }
 
 body {
@@ -158,4 +198,46 @@ body {
 
 .btn-gradient:active {
   transform: scale(0.98);
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-sans);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
