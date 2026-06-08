@@ -130,10 +130,12 @@ export function CharacterForm({ initialData }: CharacterFormProps) {
 
     if (file.size > 5 * 1024 * 1024) {
       setUploadError("Image size must be less than 5MB.");
+      e.target.value = "";
       return;
     }
     if (!file.type.startsWith("image/")) {
       setUploadError("Please select an image file.");
+      e.target.value = "";
       return;
     }
 
@@ -374,9 +376,9 @@ export function CharacterForm({ initialData }: CharacterFormProps) {
     }
 
     // Fallback initials/emoji render
-    const fallbackText = avatarType === "emoji" 
-      ? avatarValue 
-      : getInitials(name);
+    const fallbackText = avatarType === "image"
+      ? getInitials(name)
+      : avatarValue || getInitials(name);
 
     return (
       <div
@@ -434,10 +436,11 @@ export function CharacterForm({ initialData }: CharacterFormProps) {
               {/* Identity inputs */}
               <div className="space-y-4 flex-grow">
                 <div>
-                  <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2" htmlFor="character-name">
                     Character Name
                   </label>
                   <input
+                  id="character-name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -756,6 +759,8 @@ export function CharacterForm({ initialData }: CharacterFormProps) {
               {/* Toggle switch checkbox */}
               <button
                 type="button"
+                role="switch"
+                aria-checked={visibility === "public"}
                 onClick={() => setVisibility(visibility === "public" ? "private" : "public")}
                 className={cn(
                   "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/40",
@@ -846,7 +851,7 @@ export function CharacterForm({ initialData }: CharacterFormProps) {
                           color: avatarColor,
                         }}
                       >
-                        {avatarType === "emoji" ? avatarValue : getInitials(name)}
+                        {avatarType === "image" ? getInitials(name) : avatarValue || getInitials(name)}
                       </div>
                     )}
                   </div>
@@ -893,7 +898,7 @@ export function CharacterForm({ initialData }: CharacterFormProps) {
                       color: avatarColor,
                     }}
                   >
-                    {avatarType === "emoji" ? avatarValue : getInitials(name)}
+                    {avatarType === "image" ? getInitials(name) : avatarValue || getInitials(name)}
                   </div>
                 )}
               </div>

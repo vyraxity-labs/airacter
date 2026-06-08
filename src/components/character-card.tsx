@@ -131,7 +131,7 @@ export function CharacterCard({
             className="text-4xl font-extrabold select-none z-10 tracking-wider font-sans group-hover:scale-105 transition-transform duration-300"
             style={{ color: character.avatarColor }}
           >
-            {getInitials(character.name)}
+            {character.avatarType === "initials" ? character.avatarValue : getInitials(character.name)}
           </span>
         )}
       </div>
@@ -159,7 +159,7 @@ export function CharacterCard({
                 border: `1px solid ${character.avatarColor}30`
               }}
             >
-              <span className="z-10">{character.avatarType === "emoji" ? character.avatarValue : getInitials(character.name)}</span>
+              <span className="z-10">{character.avatarType === "image" ? getInitials(character.name) : character.avatarValue}</span>
             </div>
           )}
           
