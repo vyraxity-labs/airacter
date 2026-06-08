@@ -80,16 +80,18 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
       where: { userId: user.id },
       select: { characterId: true },
     }),
-    db.character.findMany({
-      where: { visibility: 'public' },
-      orderBy: { usageCount: 'desc' },
-      take: 3,
-      include: {
-        creator: {
-          select: { id: true, name: true, image: true },
-        },
-      },
-    }),
+    page === 1 && !q && category === 'all'
+      ? db.character.findMany({
+          where: { visibility: 'public' },
+          orderBy: { usageCount: 'desc' },
+          take: 3,
+          include: {
+            creator: {
+              select: { id: true, name: true, image: true },
+            },
+          },
+        })
+      : Promise.resolve([]),
   ])
 
   const totalPages = Math.ceil(total / limit)
@@ -216,7 +218,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
               <div className='flex items-center justify-center gap-6 mt-12 pt-6 border-t border-border/10'>
                 {page > 1 ? (
                   <Link
-                    href={`/explore?q=${encodeURIComponent(q)}&category=${category}&sort=${sort}&page=${page - 1}`}
+                    href={`/explore?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}&sort=${encodeURIComponent(sort)}&page=${page - 1}`}
                     className='flex items-center gap-1 text-sm font-semibold text-primary hover:underline'
                   >
                     <ChevronLeft size={16} />
@@ -263,7 +265,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
                     return (
                       <Link
                         key={pageNum}
-                        href={`/explore?q=${encodeURIComponent(q)}&category=${category}&sort=${sort}&page=${pageNum}`}
+                        href={`/explore?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}&sort=${encodeURIComponent(sort)}&page=${pageNum}`}
                         className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all border ${
                           isCurrent
                             ? 'bg-primary border-primary text-primary-foreground shadow-sm shadow-primary/20'
@@ -278,7 +280,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
 
                 {page < totalPages ? (
                   <Link
-                    href={`/explore?q=${encodeURIComponent(q)}&category=${category}&sort=${sort}&page=${page + 1}`}
+                    href={`/explore?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}&sort=${encodeURIComponent(sort)}&page=${page + 1}`}
                     className='flex items-center gap-1 text-sm font-semibold text-primary hover:underline'
                   >
                     Next
