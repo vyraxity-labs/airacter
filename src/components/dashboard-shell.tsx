@@ -90,7 +90,7 @@ export function DashboardShell({ children, sidebar, user }: DashboardShellProps)
   };
 
   return (
-    <div className="flex min-h-screen w-full overflow-hidden bg-background text-foreground font-sans theme-transition">
+    <div className="flex min-h-screen md:h-screen w-full overflow-hidden bg-background text-foreground font-sans theme-transition">
       {/* 1. Left Nav Rail - Desktop (Fixed) */}
       <nav className="hidden md:flex fixed left-0 top-0 h-full w-[72px] z-50 flex-col items-center py-5 bg-surface-lowest border-r border-border/40 backdrop-blur-xl theme-transition">
         {/* Brand Logo */}
@@ -212,7 +212,7 @@ export function DashboardShell({ children, sidebar, user }: DashboardShellProps)
       {/* 4. Main Viewport */}
       <div 
         className={cn(
-          "flex-1 flex flex-col min-h-screen pb-16 md:pb-0",
+          "flex-grow flex flex-col min-h-screen md:h-screen md:overflow-hidden pb-16 md:pb-0",
           sidebar ? "md:pl-[352px]" : "md:pl-[72px]"
         )}
       >
