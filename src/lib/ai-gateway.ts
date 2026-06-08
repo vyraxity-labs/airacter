@@ -1,19 +1,21 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from '@google/genai'
 
 // Initialize the Google Gen AI client using the API key
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY
 if (!apiKey) {
-  console.warn("Warning: GEMINI_API_KEY is not defined in the environment variables.");
+  console.warn(
+    'Warning: GEMINI_API_KEY is not defined in the environment variables.',
+  )
 }
 
-export const ai = new GoogleGenAI({ apiKey: apiKey || "" });
+export const ai = new GoogleGenAI(apiKey ? { apiKey } : {})
 
 // Recommended default model for fast, character-driven chat interactions
-export const GEMINI_DEFAULT_MODEL = "gemini-2.5-flash";
+export const GEMINI_DEFAULT_MODEL = 'gemini-2.5-flash'
 
 export interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
+  role: 'user' | 'assistant'
+  content: string
 }
 
 /**
@@ -21,9 +23,9 @@ export interface ChatMessage {
  */
 export function assembleContents(messages: ChatMessage[]) {
   return messages.map((msg) => ({
-    role: msg.role === "assistant" ? "model" : "user",
-    parts: [{ text: msg.content }]
-  }));
+    role: msg.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: msg.content }],
+  }))
 }
 
 /**
@@ -32,24 +34,23 @@ export function assembleContents(messages: ChatMessage[]) {
 export async function countTokens(
   messages: ChatMessage[],
   systemInstruction?: string,
-  model: string = GEMINI_DEFAULT_MODEL
+  model: string = GEMINI_DEFAULT_MODEL,
 ): Promise<number> {
-  if (!apiKey) {
-    return estimateTokens(messages, systemInstruction);
-  }
-
   try {
-    const contents = assembleContents(messages);
+    const contents = assembleContents(messages)
     const response = await ai.models.countTokens({
       model,
       contents,
       config: systemInstruction ? { systemInstruction } : undefined,
-    });
+    })
 
-    return response.totalTokens || estimateTokens(messages, systemInstruction);
+    return response.totalTokens || estimateTokens(messages, systemInstruction)
   } catch (error) {
-    console.error("Failed to count tokens via Gemini API, falling back to estimation:", error);
-    return estimateTokens(messages, systemInstruction);
+    console.error(
+      'Failed to count tokens via Gemini API, falling back to estimation:',
+      error,
+    )
+    return estimateTokens(messages, systemInstruction)
   }
 }
 
@@ -57,19 +58,22 @@ export async function countTokens(
  * Locally estimate the number of tokens in a chat payload as a fallback.
  * Uses the standard rule of thumb: 1 token ≈ 4 characters of English text.
  */
-export function estimateTokens(messages: ChatMessage[], systemInstruction?: string): number {
-  let charCount = 0;
-  
+export function estimateTokens(
+  messages: ChatMessage[],
+  systemInstruction?: string,
+): number {
+  let charCount = 0
+
   if (systemInstruction) {
-    charCount += systemInstruction.length;
+    charCount += systemInstruction.length
   }
-  
+
   for (const msg of messages) {
-    charCount += msg.content.length;
+    charCount += msg.content.length
   }
 
   // Count tokens based on ~4 characters per token
-  return Math.max(1, Math.ceil(charCount / 4));
+  return Math.max(1, Math.ceil(charCount / 4))
 }
 
 /**
@@ -80,10 +84,13 @@ export async function generateChatResponse(
   systemInstruction: string,
   history: ChatMessage[],
   userMessage: string,
-  model: string = GEMINI_DEFAULT_MODEL
+  model: string = GEMINI_DEFAULT_MODEL,
 ) {
-  const fullHistory = [...history, { role: "user" as const, content: userMessage }];
-  const contents = assembleContents(fullHistory);
+  const fullHistory = [
+    ...history,
+    { role: 'user' as const, content: userMessage },
+  ]
+  const contents = assembleContents(fullHistory)
 
   const response = await ai.models.generateContent({
     model,
@@ -93,9 +100,9 @@ export async function generateChatResponse(
       temperature: 0.7,
       maxOutputTokens: 1000,
     },
-  });
+  })
 
-  return response.text || "";
+  return response.text || ''
 }
 
 /**
@@ -106,10 +113,13 @@ export async function streamChatResponse(
   systemInstruction: string,
   history: ChatMessage[],
   userMessage: string,
-  model: string = GEMINI_DEFAULT_MODEL
+  model: string = GEMINI_DEFAULT_MODEL,
 ) {
-  const fullHistory = [...history, { role: "user" as const, content: userMessage }];
-  const contents = assembleContents(fullHistory);
+  const fullHistory = [
+    ...history,
+    { role: 'user' as const, content: userMessage },
+  ]
+  const contents = assembleContents(fullHistory)
 
   return ai.models.generateContentStream({
     model,
@@ -119,5 +129,5 @@ export async function streamChatResponse(
       temperature: 0.7,
       maxOutputTokens: 1500,
     },
-  });
+  })
 }
