@@ -32,7 +32,8 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const q = resolvedParams.q || "";
   const category = resolvedParams.category || "all";
   const sort = resolvedParams.sort || "popular";
-  const page = Math.max(1, parseInt(resolvedParams.page || "1", 10));
+  const parsedPage = parseInt(resolvedParams.page || "1", 10);
+  const page = isNaN(parsedPage) ? 1 : Math.max(1, parsedPage);
 
   const limit = 8;
   const skip = (page - 1) * limit;
@@ -210,7 +211,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
               <div className="flex items-center justify-center gap-6 mt-12 pt-6 border-t border-border/10">
                 {page > 1 ? (
                   <Link
-                    href={`/explore?q=${q}&category=${category}&sort=${sort}&page=${page - 1}`}
+                    href={`/explore?q=\${encodeURIComponent(q)}&category=\${category}&sort=\${sort}&page=\${page - 1}`}
                     className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
                   >
                     <ChevronLeft size={16} />
@@ -227,10 +228,23 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
                   {Array.from({ length: totalPages }).map((_, i) => {
                     const pageNum = i + 1;
                     const isCurrent = pageNum === page;
+                    const isNearCurrent = Math.abs(pageNum - page) <= 1;
+                    const isBoundary = pageNum === 1 || pageNum === totalPages;
+
+                    if (!isNearCurrent && !isBoundary) {
+                      if (pageNum === 2 && page > 3) {
+                        return <span key="ellipsis-start" className="px-2 text-outline text-xs">...</span>;
+                      }
+                      if (pageNum === totalPages - 1 && page < totalPages - 2) {
+                        return <span key="ellipsis-end" className="px-2 text-outline text-xs">...</span>;
+                      }
+                      return null;
+                    }
+
                     return (
                       <Link
                         key={pageNum}
-                        href={`/explore?q=${q}&category=${category}&sort=${sort}&page=${pageNum}`}
+                        href={`/explore?q=\${encodeURIComponent(q)}&category=\${category}&sort=\${sort}&page=\${pageNum}`}
                         className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all border ${
                           isCurrent
                             ? "bg-primary border-primary text-primary-foreground shadow-sm shadow-primary/20"
@@ -245,7 +259,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
 
                 {page < totalPages ? (
                   <Link
-                    href={`/explore?q=${q}&category=${category}&sort=${sort}&page=${page + 1}`}
+                    href={`/explore?q=\${encodeURIComponent(q)}&category=\${category}&sort=\${sort}&page=\${page + 1}`}
                     className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
                   >
                     Next

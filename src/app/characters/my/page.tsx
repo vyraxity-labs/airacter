@@ -143,7 +143,7 @@ export default async function MyCharactersPage({ searchParams }: MyCharactersPag
           <div className="flex items-center gap-8">
             <nav className="flex gap-6">
               <Link
-                href={`/characters/my?tab=all${q ? `&q=${q}` : ""}`}
+                href={`/characters/my?tab=all${q ? `&q=${encodeURIComponent(q)}` : ""}`}
                 className={cn(
                   "pb-1 font-semibold text-sm transition-all border-b-2 hover:text-primary",
                   tab === "all"
