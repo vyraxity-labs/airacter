@@ -5,6 +5,15 @@ import { useRouter } from "next/navigation";
 import { Bookmark, Plus, Check, MessageSquare, Edit } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+function getInitials(name: string): string {
+  if (!name.trim()) return "AI";
+  const words = name.trim().split(/\s+/);
+  if (words.length === 1) {
+    return words[0].substring(0, 2).toUpperCase();
+  }
+  return words.map(w => w[0]).join("").substring(0, 3).toUpperCase();
+}
+
 interface Creator {
   id: string;
   name: string | null;
@@ -42,6 +51,7 @@ export function CharacterCard({
   const [isPending, startTransition] = useTransition();
   const [localSaved, setLocalSaved] = useState(isSaved);
   const [localSaveCount, setLocalSaveCount] = useState(character.saveCount);
+  const [imageError, setImageError] = useState(false);
 
   const isCreator = currentUserId === character.createdBy;
 
@@ -86,12 +96,13 @@ export function CharacterCard({
 
   // Render the large aspect-square visual header for the card
   const renderVisualHeader = () => {
-    if (character.avatarType === "image" && character.avatarValue) {
+    if (character.avatarType === "image" && character.avatarValue && !imageError) {
       return (
         <img
           src={character.avatarValue}
           alt={character.name}
           className="w-full aspect-square object-cover rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-500"
+          onError={() => setImageError(true)}
         />
       );
     }
@@ -120,7 +131,7 @@ export function CharacterCard({
             className="text-4xl font-extrabold select-none z-10 tracking-wider font-sans group-hover:scale-105 transition-transform duration-300"
             style={{ color: character.avatarColor }}
           >
-            {character.avatarValue.substring(0, 2).toUpperCase()}
+            {character.avatarType === "initials" ? character.avatarValue : getInitials(character.name)}
           </span>
         )}
       </div>
@@ -133,11 +144,12 @@ export function CharacterCard({
       <div className="glass-card rounded-2xl p-6 flex flex-col gap-4 hover:border-primary/30 hover:-translate-y-1 hover:shadow-[0_10px_30px_-10px_rgba(137,206,255,0.2)] transition-all duration-300 group">
         <div className="flex justify-between items-start">
           {/* Small Avatar icon container */}
-          {character.avatarType === "image" && character.avatarValue ? (
+          {character.avatarType === "image" && character.avatarValue && !imageError ? (
             <img 
               src={character.avatarValue}
               alt={character.name}
               className="w-16 h-16 rounded-2xl object-cover shadow-inner"
+              onError={() => setImageError(true)}
             />
           ) : (
             <div 
@@ -147,7 +159,7 @@ export function CharacterCard({
                 border: `1px solid ${character.avatarColor}30`
               }}
             >
-              <span className="z-10">{character.avatarType === "emoji" ? character.avatarValue : character.avatarValue.substring(0, 2).toUpperCase()}</span>
+              <span className="z-10">{character.avatarType === "image" ? getInitials(character.name) : character.avatarValue}</span>
             </div>
           )}
           
