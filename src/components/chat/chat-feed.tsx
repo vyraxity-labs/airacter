@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Send, Sparkles, Loader2, AlertCircle } from 'lucide-react'
 import { marked } from 'marked'
 import { cn } from '@/lib/utils'
+import DOMPurify from 'dompurify'
 
 interface Character {
   id: string
@@ -183,7 +184,10 @@ export function ChatFeed({
 
   const renderMarkdown = (content: string) => {
     try {
-      return { __html: marked.parse(content, { async: false }) as string }
+      const rawHtml = marked.parse(content, { async: false }) as string
+      const cleanHtml =
+        typeof window !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml
+      return { __html: cleanHtml }
     } catch (e) {
       return { __html: content }
     }
