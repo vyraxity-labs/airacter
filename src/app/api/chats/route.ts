@@ -16,8 +16,25 @@ export async function GET(request: Request) {
   }
 
   try {
+    const { searchParams } = new URL(request.url)
+    const q = searchParams.get('q')
+
+    const whereClause: any = { userId }
+    if (q) {
+      whereClause.OR = [
+        { title: { contains: q, mode: 'insensitive' } },
+        {
+          messages: {
+            some: {
+              content: { contains: q, mode: 'insensitive' }
+            }
+          }
+        }
+      ]
+    }
+
     const chats = await db.chat.findMany({
-      where: { userId },
+      where: whereClause,
       orderBy: { updatedAt: 'desc' },
       include: {
         character: {
@@ -34,7 +51,8 @@ export async function GET(request: Request) {
           },
         },
         messages: {
-          orderBy: { createdAt: 'asc' },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
         },
       },
     })

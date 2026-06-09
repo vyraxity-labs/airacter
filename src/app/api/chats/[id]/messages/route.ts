@@ -1,8 +1,9 @@
 import { db } from '@/lib/db'
-import { NextResponse } from 'next/server'
+import { after, NextResponse } from 'next/server'
 import { getUserTokenBalance } from '@/lib/tokens'
 import { streamChatResponse, countTokens, ChatMessage } from '@/lib/ai-gateway'
 import { z } from 'zod'
+import { autoTitleChat } from '@/lib/auto-titling'
 
 const messageCreateSchema = z.object({
   content: z.string().min(1, 'Message content cannot be empty'),
@@ -124,6 +125,8 @@ export async function POST(request: Request, { params }: RouteParams) {
       content: m.content,
     }))
 
+    const isFirstMessage = dbMessages.length === 0
+
     // 4. Create user message record in the database
     await db.message.create({
       data: {
@@ -138,6 +141,15 @@ export async function POST(request: Request, { params }: RouteParams) {
       where: { id },
       data: { updatedAt: new Date() },
     })
+
+    if (isFirstMessage) {
+      // Trigger background auto-titling asynchronously
+      after(
+        autoTitleChat(id, content).catch((err) => {
+          console.error('Failed to trigger background auto-titling:', err)
+        }),
+      )
+    }
 
     // 5. Initialize streaming response from Gemini SDK
     const responseStream = await streamChatResponse(

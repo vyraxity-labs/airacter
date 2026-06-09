@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils'
 import DOMPurify from 'dompurify'
 import Prism from 'prismjs'
 import 'prismjs/themes/prism-tomorrow.css'
+import { useRouter } from 'next/navigation'
 
 // Load common Prism language components
 import 'prismjs/components/prism-javascript'
@@ -91,6 +92,7 @@ export function ChatFeed({
   tokenBalance,
   setTokenBalance,
 }: ChatFeedProps) {
+  const router = useRouter()
   const [inputMessage, setInputMessage] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [streamingMessage, setStreamingMessage] = useState('')
@@ -258,6 +260,7 @@ export function ChatFeed({
 
       // Truncate messages after that user message only after successful response
       setMessages(messages.slice(0, lastUserIndex + 1))
+      router.refresh()
 
       const reader = response.body?.getReader()
       const decoder = new TextDecoder()
@@ -297,6 +300,7 @@ export function ChatFeed({
                     Math.max(0, prev - data.totalTokens),
                   )
                 }
+                router.refresh()
               } else if (data.error) {
                 throw new Error(data.error)
               }
@@ -352,6 +356,8 @@ export function ChatFeed({
         throw new Error(errData.error || 'Failed to dispatch message')
       }
 
+      router.refresh()
+
       // Read SSE stream
       const reader = response.body?.getReader()
       const decoder = new TextDecoder()
@@ -391,6 +397,7 @@ export function ChatFeed({
                     Math.max(0, prev - data.totalTokens),
                   )
                 }
+                router.refresh()
               } else if (data.error) {
                 throw new Error(data.error)
               }
