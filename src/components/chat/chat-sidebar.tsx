@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   Search, 
@@ -9,7 +9,8 @@ import {
   Edit2, 
   Check, 
   X,
-  Compass
+  Compass,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -58,14 +59,43 @@ export function ChatSidebar({ chats, activeChatId, onDeleteChat, onRenameChat }:
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [isSubmittingRename, setIsSubmittingRename] = useState(false);
+  const [displayChats, setDisplayChats] = useState<Chat[]>(chats);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Sync displayChats when chats prop changes
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setDisplayChats(chats);
+    }
+  }, [chats, searchQuery]);
+
+  // Debounced server-side search
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setDisplayChats(chats);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/chats?q=${encodeURIComponent(searchQuery)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setDisplayChats(data.chats || []);
+        }
+      } catch (err) {
+        console.error("Failed to search chats:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, chats]);
 
   // Group chats chronologically
   const groupChats = () => {
-    const filtered = chats.filter((chat) => {
-      const title = chat.title || chat.character.name;
-      return title.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-
     const groups: Record<string, Chat[]> = {
       Today: [],
       Yesterday: [],
@@ -80,7 +110,7 @@ export function ChatSidebar({ chats, activeChatId, onDeleteChat, onRenameChat }:
     const sevenDaysAgo = new Date(today);
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    filtered.forEach((chat) => {
+    displayChats.forEach((chat) => {
       const date = new Date(chat.updatedAt);
       if (date >= today) {
         groups.Today.push(chat);
@@ -161,7 +191,11 @@ export function ChatSidebar({ chats, activeChatId, onDeleteChat, onRenameChat }:
 
         {/* Search Input Bar */}
         <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-outline/80 group-hover:text-primary transition-colors" size={14} />
+          {isSearching ? (
+            <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 text-primary animate-spin" size={14} />
+          ) : (
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-outline/80 group-hover:text-primary transition-colors" size={14} />
+          )}
           <input
             type="text"
             value={searchQuery}
