@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { NextResponse } from 'next/server'
+import { after, NextResponse } from 'next/server'
 import { getUserTokenBalance } from '@/lib/tokens'
 import { streamChatResponse, countTokens, ChatMessage } from '@/lib/ai-gateway'
 import { z } from 'zod'
@@ -144,9 +144,11 @@ export async function POST(request: Request, { params }: RouteParams) {
 
     if (isFirstMessage) {
       // Trigger background auto-titling asynchronously
-      autoTitleChat(id, content).catch((err) => {
-        console.error('Failed to trigger background auto-titling:', err)
-      })
+      after(
+        autoTitleChat(id, content).catch((err) => {
+          console.error('Failed to trigger background auto-titling:', err)
+        }),
+      )
     }
 
     // 5. Initialize streaming response from Gemini SDK
