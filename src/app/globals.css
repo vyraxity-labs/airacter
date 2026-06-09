@@ -280,19 +280,26 @@ body {
   font-size: 0.85em;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+.markdown-content pre[class*="language-"],
 .markdown-content pre {
-  background-color: var(--surface-lowest);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
+  background-color: var(--surface-lowest) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 0.85rem !important;
+  overflow-x: auto !important;
   margin-bottom: 0.75rem;
 }
+.markdown-content code[class*="language-"],
+.markdown-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
 .markdown-content pre code {
-  background-color: transparent;
-  color: inherit;
-  padding: 0;
-  border-radius: 0;
-  font-size: inherit;
-  border: none;
+  background-color: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  border: none !important;
 }
