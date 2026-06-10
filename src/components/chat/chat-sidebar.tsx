@@ -235,7 +235,7 @@ export function ChatSidebar({
       </div>
 
       {/* 2. Chronological Chats List */}
-      <div className='flex-grow overflow-y-auto custom-scrollbar p-2 space-y-4'>
+      <div className='flex-grow overflow-y-auto custom-scrollbar p-2 space-y-4' suppressHydrationWarning>
         {chatGroups.length === 0 ? (
           <div className='py-12 px-4 text-center'>
             <MessageSquare
@@ -251,8 +251,8 @@ export function ChatSidebar({
           </div>
         ) : (
           chatGroups.map(([groupName, items]) => (
-            <div key={groupName} className='space-y-1'>
-              <span className='block text-[9px] uppercase font-extrabold tracking-widest text-outline px-3 mb-1.5'>
+            <div key={groupName} className='space-y-1' suppressHydrationWarning>
+              <span className='block text-[9px] uppercase font-extrabold tracking-widest text-outline px-3 mb-1.5' suppressHydrationWarning>
                 {groupName}
               </span>
 

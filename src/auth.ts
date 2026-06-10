@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { authConfig } from "./auth.config";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { STARTING_TOKEN } from "@/lib/constants";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -52,4 +53,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  events: {
+    async createUser({ user }) {
+      if (!user.id) return;
+      try {
+        const existingTransaction = await db.tokenTransaction.findFirst({
+          where: {
+            userId: user.id,
+            type: "credit_welcome"
+          }
+        });
+
+        if (!existingTransaction) {
+          await db.tokenTransaction.create({
+            data: {
+              userId: user.id,
+              type: "credit_welcome",
+              direction: "credit",
+              amount: STARTING_TOKEN,
+              metadata: {
+                reason: "Welcome bonus (OAuth)",
+              },
+            },
+          });
+          console.log(`[NextAuth] Credited OAuth starter tokens to user ${user.id} (${user.email})`);
+        }
+      } catch (err) {
+        console.error(`[NextAuth] Failed to credit welcome tokens for user ${user.id}:`, err);
+      }
+    }
+  }
 });
