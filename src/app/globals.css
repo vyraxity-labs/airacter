@@ -209,6 +209,13 @@ body {
   transform: scale(0.98);
 }
 
+/* Gradient primary card style */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--btn-gradient-start) 0%, var(--btn-gradient-end) 100%);
+  color: #ffffff;
+}
+
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
