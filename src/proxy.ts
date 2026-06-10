@@ -63,14 +63,28 @@ export async function proxy(request: NextRequest) {
       userId = user.id || "";
       userEmail = user.email || "";
       userRole = (user as any).role || "USER";
-    } else {
-      // Robust secondary fallback: decode token directly from cookies
+    }
+
+    // If nextAuthMiddleware didn't yield the user context, try parsing JWT from cookies directly
+    if (!userId) {
       try {
         const { getToken } = await import("next-auth/jwt");
+        const cookies = request.cookies;
+        const cookieNames = [
+          "__Secure-authjs.session-token",
+          "authjs.session-token",
+          "__Secure-next-auth.session-token",
+          "next-auth.session-token"
+        ];
+        const activeCookieName = cookieNames.find(name => cookies.has(name));
+
         const token = await getToken({
           req: request,
           secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+          cookieName: activeCookieName,
+          secureCookie: activeCookieName?.startsWith("__Secure-"),
         });
+
         if (token) {
           userId = (token.id as string) || (token.sub as string) || "";
           userEmail = token.email || "";
