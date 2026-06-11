@@ -17,6 +17,11 @@ export const authConfig = {
         return true;
       }
 
+      // Allow public access to the root landing page
+      if (nextUrl.pathname === "/") {
+        return true;
+      }
+
       // Redirect authenticated users away from login/register pages
       if (isAuthRoute) {
         if (isLoggedIn) {
