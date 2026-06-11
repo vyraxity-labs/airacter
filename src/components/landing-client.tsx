@@ -18,6 +18,7 @@ import {
   Globe,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
 
 interface Character {
   id: string
@@ -55,23 +56,27 @@ export function LandingClient({
     if (user) {
       router.push(`/chats?character=${slug}`)
     } else {
-      router.push(`/auth/login?callbackUrl=/chats?character=${slug}`)
+      const callbackUrl = encodeURIComponent(`/chats?character=${slug}`)
+      router.push(`/auth/login?callbackUrl=${callbackUrl}`)
     }
   }
 
   const renderCharacterAvatar = (char: Character) => {
     if (char.avatarType === 'image' && char.avatarValue) {
       return (
-        <img
+        <Image
           src={char.avatarValue}
           alt={char.name}
+          width={48}
+          height={48}
           className='w-12 h-12 rounded-xl object-cover border border-border/10'
         />
       )
     }
 
     const initials = char.name
-      .split(' ')
+      .trim()
+      .split(/\s+/)
       .map((n) => n[0])
       .join('')
       .substring(0, 2)
@@ -165,10 +170,20 @@ export function LandingClient({
               </Link>
               <Link
                 href='/settings'
-                className='w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xs font-black uppercase hover:bg-primary/20 transition-all'
+                className='w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xs font-black uppercase hover:bg-primary/20 transition-all overflow-hidden'
                 title='Account Settings'
               >
-                {user.name ? user.name[0] : <UserIcon size={14} />}
+                {user.image ? (
+                  <img
+                    src={user.image}
+                    alt={user.name || 'User'}
+                    className='w-full h-full object-cover'
+                  />
+                ) : user.name ? (
+                  user.name[0]
+                ) : (
+                  <UserIcon size={14} />
+                )}
               </Link>
             </div>
           ) : (
