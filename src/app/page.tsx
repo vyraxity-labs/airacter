@@ -1,25 +1,14 @@
-import React from "react";
-import { auth } from "@/auth";
-import { db } from "@/lib/db";
-import { LandingClient } from "@/components/landing-client";
+import { auth } from '@/auth'
+import { LandingClient } from '@/components/landing-client'
+import { getTrendingCharacters } from '@/models/character/query'
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-  const session = await auth();
+  const session = await auth()
 
   // Query top trending/public characters to showcase in the landing gallery
-  const rawCharacters = await db.character.findMany({
-    where: {
-      visibility: "public",
-    },
-    orderBy: [
-      { isFeatured: "desc" },
-      { isVerified: "desc" },
-      { usageCount: "desc" },
-    ],
-    take: 6,
-  });
+  const rawCharacters = await getTrendingCharacters()
 
   // Map database characters to safe serializable objects for client-side usage
   const featuredCharacters = rawCharacters.map((char) => ({
@@ -34,22 +23,19 @@ export default async function Home() {
     tone: char.tone,
     isVerified: char.isVerified,
     usageCount: char.usageCount,
-  }));
+  }))
 
   const userContext = session?.user
     ? {
-        id: session.user.id || "",
+        id: session.user.id || '',
         name: session.user.name,
         email: session.user.email,
         image: session.user.image,
-        role: (session.user as any).role || "USER",
+        role: (session.user as any).role || 'USER',
       }
-    : null;
+    : null
 
   return (
-    <LandingClient 
-      user={userContext} 
-      featuredCharacters={featuredCharacters} 
-    />
-  );
+    <LandingClient user={userContext} featuredCharacters={featuredCharacters} />
+  )
 }
