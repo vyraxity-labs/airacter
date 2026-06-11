@@ -61,6 +61,32 @@ export async function PUT(
       return NextResponse.json({ error: "Forbidden: You are not the creator of this character" }, { status: 403 });
     }
 
+    // 24-hour cooling-off validation for public resubmissions
+    if (result.data.visibility === "public" && existing.visibility !== "public") {
+      const lastRejection = await db.characterReport.findFirst({
+        where: {
+          characterId: id,
+          status: "resolved",
+          notes: { startsWith: "REJECTED:" },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (lastRejection) {
+        const cooldownMs = 24 * 60 * 60 * 1000;
+        const elapsed = Date.now() - lastRejection.createdAt.getTime();
+        if (elapsed < cooldownMs) {
+          const remainingHours = Math.ceil((cooldownMs - elapsed) / (60 * 60 * 1000));
+          return NextResponse.json(
+            {
+              error: `Resubmission blocked. This character was recently rejected by moderation. You can resubmit it for public approval in ${remainingHours} hours.`,
+            },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     const updated = await db.character.update({
       where: { id },
       data: result.data,
