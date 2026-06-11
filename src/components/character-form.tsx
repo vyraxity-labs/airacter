@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
   Check,
   AlertCircle,
+  AlertTriangle,
   HelpCircle,
   Loader2
 } from "lucide-react";
@@ -64,9 +65,15 @@ interface CharacterData {
 
 interface CharacterFormProps {
   initialData?: CharacterData;
+  cooldownRemainingHours?: number;
+  rejectionReason?: string;
 }
 
-export function CharacterForm({ initialData }: CharacterFormProps) {
+export function CharacterForm({ 
+  initialData, 
+  cooldownRemainingHours = 0, 
+  rejectionReason = "" 
+}: CharacterFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -748,6 +755,20 @@ export function CharacterForm({ initialData }: CharacterFormProps) {
               <h2 className="text-lg font-bold text-on-surface">Privacy &amp; Permissions</h2>
             </div>
 
+            {cooldownRemainingHours > 0 && (
+              <div className="p-4 rounded-xl border border-error/20 bg-error/10 text-error flex flex-col gap-1.5 select-none animate-pulse">
+                <div className="flex items-center gap-2 text-xs font-bold">
+                  <AlertTriangle size={14} />
+                  Resubmission Blocked (24-Hour Cooling Policy)
+                </div>
+                <p className="text-[10px] leading-relaxed opacity-90 font-medium">
+                  This character was rejected by moderation for: &ldquo;{rejectionReason}&rdquo;. 
+                  You can resubmit it for public directory listing in <strong>{cooldownRemainingHours} hours</strong>. 
+                  In the meantime, it has been set to private.
+                </p>
+              </div>
+            )}
+
             <div className="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-border/10">
               <div className="max-w-[80%]">
                 <p className="text-sm font-bold text-on-surface">Public Visibility</p>
@@ -760,11 +781,16 @@ export function CharacterForm({ initialData }: CharacterFormProps) {
               <button
                 type="button"
                 role="switch"
+                disabled={cooldownRemainingHours > 0}
                 aria-checked={visibility === "public"}
-                onClick={() => setVisibility(visibility === "public" ? "private" : "public")}
+                onClick={() => {
+                  if (cooldownRemainingHours > 0) return;
+                  setVisibility(visibility === "public" ? "private" : "public");
+                }}
                 className={cn(
                   "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/40",
-                  visibility === "public" ? "bg-primary" : "bg-surface-container-highest"
+                  visibility === "public" ? "bg-primary" : "bg-surface-container-highest",
+                  cooldownRemainingHours > 0 && "opacity-50 cursor-not-allowed"
                 )}
               >
                 <span

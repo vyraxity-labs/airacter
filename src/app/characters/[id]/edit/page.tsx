@@ -31,6 +31,27 @@ export default async function EditCharacterPage({ params }: EditCharacterPagePro
     redirect("/characters/my");
   }
 
+  // Check if character was rejected within the last 24 hours
+  const lastRejection = await db.characterReport.findFirst({
+    where: {
+      characterId: id,
+      status: "resolved",
+      notes: { startsWith: "REJECTED:" },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  let cooldownRemainingHours = 0;
+  let rejectionReason = "";
+  if (lastRejection) {
+    const elapsed = Date.now() - lastRejection.createdAt.getTime();
+    const cooldown = 24 * 60 * 60 * 1000;
+    if (elapsed < cooldown) {
+      cooldownRemainingHours = Math.ceil((cooldown - elapsed) / (60 * 60 * 1000));
+      rejectionReason = lastRejection.notes?.replace("REJECTED: ", "") || "Does not meet community standards.";
+    }
+  }
+
   const characterData = {
     id: character.id,
     name: character.name,
@@ -46,7 +67,11 @@ export default async function EditCharacterPage({ params }: EditCharacterPagePro
 
   return (
     <DashboardShell user={session.user}>
-      <CharacterForm initialData={characterData} />
+      <CharacterForm 
+        initialData={characterData} 
+        cooldownRemainingHours={cooldownRemainingHours} 
+        rejectionReason={rejectionReason} 
+      />
     </DashboardShell>
   );
 }
