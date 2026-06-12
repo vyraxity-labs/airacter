@@ -3,6 +3,9 @@ import type { NextRequest } from 'next/server'
 import NextAuth from 'next-auth'
 import { authConfig } from './auth.config'
 import { verifyToken } from '@/lib/jwt'
+import { API_AUTH_ROUTES_PREFIX, API_ROUTES_PREFIX } from './auth.constants'
+import { Role } from './generated/prisma/enums'
+import { getRequiredEnv } from './lib/env'
 
 // Initialize NextAuth instance safe for Edge runtime (no database imports)
 const { auth: nextAuthMiddleware } = NextAuth(authConfig)
@@ -17,9 +20,9 @@ export async function proxy(request: NextRequest) {
   requestHeaders.delete('x-user-role')
 
   // 1. API Route Protection & User Forwarding
-  if (pathname.startsWith('/api')) {
+  if (pathname.startsWith(API_ROUTES_PREFIX)) {
     // Skip verification check on auth API routes
-    if (pathname.startsWith('/api/auth')) {
+    if (pathname.startsWith(API_AUTH_ROUTES_PREFIX)) {
       return NextResponse.next({
         request: {
           headers: requestHeaders,
@@ -55,14 +58,14 @@ export async function proxy(request: NextRequest) {
     // Fallback: Check if there's an active NextAuth web session
     let userId = ''
     let userEmail = ''
-    let userRole = 'USER'
+    let userRole: Role = Role.USER
 
     const session = await (nextAuthMiddleware as any)(request)
     if (session && session.auth?.user) {
       const user = session.auth.user
       userId = user.id || ''
       userEmail = user.email || ''
-      userRole = (user as any).role || 'USER'
+      userRole = (user as any).role || Role.USER
     }
 
     // If nextAuthMiddleware didn't yield the user context, try parsing JWT from cookies directly
@@ -81,7 +84,9 @@ export async function proxy(request: NextRequest) {
         const token = activeCookieName
           ? await getToken({
               req: request,
-              secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+              secret:
+                getRequiredEnv('AUTH_SECRET') ||
+                getRequiredEnv('NEXTAUTH_SECRET'),
               cookieName: activeCookieName,
               secureCookie: activeCookieName?.startsWith('__Secure-'),
             })
@@ -90,7 +95,7 @@ export async function proxy(request: NextRequest) {
         if (token) {
           userId = (token.id as string) || (token.sub as string) || ''
           userEmail = token.email || ''
-          userRole = (token.role as string) || 'USER'
+          userRole = (token.role as Role) || Role.USER
         }
       } catch (err) {
         console.error('Failed to extract token via getToken fallback:', err)

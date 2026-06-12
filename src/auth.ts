@@ -6,6 +6,8 @@ import { authConfig } from './auth.config'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { STARTING_TOKEN } from '@/lib/constants'
+import { DUMMY_PASSWORD_HASH } from './auth.constants'
+import { Direction, TransactionType } from './generated/prisma/enums'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -32,10 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!user || !user.password) {
           // Perform a dummy comparison to mitigate timing attacks / email enumeration
-          await bcrypt.compare(
-            password,
-            '$2a$12$Kb9R9b6W6v8u7t6s5r4e3u2i1o0p9a8s7d6f5g4h3j2k1l0z9x8c7',
-          )
+          await bcrypt.compare(password, DUMMY_PASSWORD_HASH)
           return null
         }
 
@@ -63,7 +62,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const existingTransaction = await db.tokenTransaction.findFirst({
           where: {
             userId: user.id,
-            type: 'credit_welcome',
+            type: TransactionType.credit_welcome,
           },
         })
 
@@ -71,8 +70,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           await db.tokenTransaction.create({
             data: {
               userId: user.id,
-              type: 'credit_welcome',
-              direction: 'credit',
+              type: TransactionType.credit_welcome,
+              direction: Direction.credit,
               amount: STARTING_TOKEN,
               metadata: {
                 reason: 'Welcome bonus (OAuth)',
