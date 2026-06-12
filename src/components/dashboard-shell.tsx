@@ -39,7 +39,7 @@ export function DashboardShell({
             variant='ghost'
             size='icon'
             className={cn(
-              'fixed z-50 top-0 bg-surface-low rounded-tl-none rounded-bl-none cursor-pointer md:hidden',
+              'fixed z-50 top-0 bg-surface-low rounded-tl-none rounded-bl-none cursor-pointer md:hidden transition-all duration-300',
               asideIsOpen ? 'left-[280px]' : 'left-0',
             )}
             onClick={() => setAsideIsOpen(!asideIsOpen)}

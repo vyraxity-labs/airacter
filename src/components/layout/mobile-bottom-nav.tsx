@@ -12,12 +12,14 @@ const MobileBottomNav = () => {
   const navItems = getNavItems(pathname)
 
   return (
-    <div className='md:hidden fixed bottom-0 left-0 w-full z-40'>
-      <section className='w-full flex justify-end'>
-        {/* Theme Switcher - Mobile */}
-        <ThemeUI />
+    <div className='md:hidden fixed bottom-0 left-0 w-full z-40 pointer-events-none'>
+      <section className='w-full flex justify-end pr-4 pb-2'>
+        <div className='bg-surface-low border border-border rounded-full shadow-lg pointer-events-auto'>
+          {/* Theme Switcher - Mobile */}
+          <ThemeUI />
+        </div>
       </section>
-      <nav className='h-16 bg-surface-lowest/90 backdrop-blur-xl border-t border-border flex items-center justify-around px-4 theme-transition'>
+      <nav className='h-16 bg-surface-lowest/90 backdrop-blur-xl border-t border-border flex items-center justify-around px-4 theme-transition pointer-events-auto'>
         {navItems.map((item) => {
           const Icon = item.icon
           return (
@@ -40,7 +42,10 @@ const MobileBottomNav = () => {
         })}
 
         {/* Profile / Logout - Mobile */}
-        <Logout />
+        <Logout
+          showLabel
+          className='text-on-surface-variant p-2.5 flex flex-col items-center justify-center flex-1 max-w-20 cursor-pointer hover:bg-error/50 hover:text-on-error'
+        />
       </nav>
     </div>
   )

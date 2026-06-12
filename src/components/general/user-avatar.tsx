@@ -1,3 +1,4 @@
+import { getInitials } from '@/models/character/helper'
 import { User } from '@/models/user/types'
 
 const UserAvatar = ({ user }: { user?: User }) => {
@@ -11,12 +12,7 @@ const UserAvatar = ({ user }: { user?: User }) => {
     )
   }
 
-  const initials = (user?.name || user?.email || 'U')
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .substring(0, 2)
-    .toUpperCase()
+  const initials = getInitials(user?.name || user?.email || 'U')
 
   return (
     <div className='w-8 h-8 rounded-full border-2 border-primary bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-sans'>

@@ -10,8 +10,8 @@ const AsideBar = ({ children }: { children: ReactNode }) => {
   return (
     <aside
       className={cn(
-        'w-screen md:w-[280px] h-screen fixed md:left-[72px] top-0 border-r border-border/40 backdrop-blur-sm z-50 theme-transition',
-        asideIsOpen ? 'left-0' : 'left-[-2000px]',
+        'w-screen md:w-[280px] h-screen fixed left-0 md:left-[72px] top-0 border-r border-border/40 backdrop-blur-sm bg-background/40 z-50 transition-all duration-300',
+        asideIsOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
       )}
       onClick={() => setAsideIsOpen(false)}
     >
