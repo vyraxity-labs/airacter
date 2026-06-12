@@ -1,3 +1,4 @@
+import { getInitials } from '@/models/character/helper'
 import { Character } from '@/models/character/types'
 import Image from 'next/image'
 
@@ -14,13 +15,7 @@ const CharacterAvatar = ({ char }: { char: Character }) => {
     )
   }
 
-  const initials = char.name
-    .trim()
-    .split(/\s+/)
-    .map((n) => n[0])
-    .join('')
-    .substring(0, 2)
-    .toUpperCase()
+  const initials = getInitials(char.name)
 
   return (
     <div
