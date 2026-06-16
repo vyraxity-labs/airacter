@@ -17,3 +17,30 @@ export const getTrendingCharacters = async () => {
 
   return trendingCharacters
 }
+
+export const findCharacterBySlug = async (slug: string) => {
+  try {
+    const character = await db.character.findUnique({
+      where: { slug },
+    })
+    return character
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export const incrementCharacterUsage = async (characterId: string) => {
+  try {
+    const character = await db.character.update({
+      where: { id: characterId },
+      data: {
+        usageCount: { increment: 1 },
+      },
+    })
+    return character
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}

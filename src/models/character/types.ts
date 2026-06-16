@@ -1,13 +1,22 @@
+import { AvatarType, Category, Visibility } from '@/generated/prisma/enums'
+
 export interface Character {
   id: string
-  name: string
   slug: string
+  name: string
   description: string
-  avatarType: 'emoji' | 'initials' | 'image'
+  systemPrompt: string
+  avatarType: AvatarType
   avatarValue: string
   avatarColor: string
-  category: string
   tone: string[]
+  category: Category
+  visibility: Visibility
   isVerified: boolean
+  isFeatured: boolean
   usageCount: number
+  saveCount: number
+  createdBy: string
+  createdAt: Date
+  updatedAt: Date
 }
