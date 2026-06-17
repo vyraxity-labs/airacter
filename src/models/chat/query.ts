@@ -2,7 +2,6 @@
 
 import { Character } from '@/generated/prisma/client'
 import { db } from '@/lib/db'
-import { incrementCharacterUsage } from '../character/query'
 
 export const findExistingUserChat = async (
   userId: string,
@@ -36,7 +35,12 @@ export const initializeNewChat = async (
       })
 
       // Increment usageCount transactional
-      await incrementCharacterUsage(character.id)
+      await tx.character.update({
+        where: { id: character.id },
+        data: {
+          usageCount: { increment: 1 },
+        },
+      })
 
       return chat
     })

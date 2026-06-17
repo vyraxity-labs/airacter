@@ -23,6 +23,8 @@ interface MessageCalloutProps {
   isStreaming: boolean
   handleFeedback: (msgId: string, type: 'up' | 'down') => void
   handleRegenerate: () => Promise<void>
+  activeSpeechId: string | null
+  setActiveSpeechId: (id: string | null) => void
 }
 
 const MessageCallout = ({
@@ -32,9 +34,10 @@ const MessageCallout = ({
   isStreaming,
   handleFeedback,
   handleRegenerate,
+  activeSpeechId,
+  setActiveSpeechId,
 }: MessageCalloutProps) => {
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null)
-  const [activeSpeechId, setActiveSpeechId] = useState<string | null>(null)
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
   const isUser = msg.role === 'user'
 

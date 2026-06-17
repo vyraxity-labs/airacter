@@ -20,3 +20,14 @@ export interface Character {
   createdAt: Date
   updatedAt: Date
 }
+
+export type FeaturedCharacter = Omit<
+  Character,
+  | 'systemPrompt'
+  | 'createdBy'
+  | 'updatedAt'
+  | 'createdAt'
+  | 'saveCount'
+  | 'isFeatured'
+  | 'visibility'
+>

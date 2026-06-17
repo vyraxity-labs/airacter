@@ -1,6 +1,6 @@
 'use client'
 
-import { Character } from '@/models/character/types'
+import { FeaturedCharacter } from '@/models/character/types'
 import { User } from '@/models/user/types'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
@@ -11,7 +11,7 @@ const FeaturedCharacters = ({
   featuredCharacters,
   user,
 }: {
-  featuredCharacters: Character[]
+  featuredCharacters: FeaturedCharacter[]
   user: User | null
 }) => {
   const router = useRouter()

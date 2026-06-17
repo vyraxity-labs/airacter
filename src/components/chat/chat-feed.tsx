@@ -50,6 +50,7 @@ export function ChatFeed({
   const [streamingMessage, setStreamingMessage] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
   const [imageError, setImageError] = useState(false)
+  const [activeSpeechId, setActiveSpeechId] = useState<string | null>(null)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -274,6 +275,8 @@ export function ChatFeed({
                 isStreaming={isStreaming}
                 handleFeedback={handleFeedback}
                 handleRegenerate={handleRegenerate}
+                activeSpeechId={activeSpeechId}
+                setActiveSpeechId={setActiveSpeechId}
               />
             )
           })
