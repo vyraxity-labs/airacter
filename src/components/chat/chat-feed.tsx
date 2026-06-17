@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { Send, Loader2, AlertCircle } from 'lucide-react'
+import { Loader2, AlertCircle } from 'lucide-react'
 import Prism from 'prismjs'
 import 'prismjs/themes/prism-tomorrow.css'
 import { useRouter } from 'next/navigation'

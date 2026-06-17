@@ -1,6 +1,5 @@
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
-import { db } from '@/lib/db'
 import { ChatClientWrapper } from '@/components/chat/chat-client-wrapper'
 import { getUserTokenBalance } from '@/lib/tokens'
 import { LOGIN_PAGE } from '@/auth.constants'
