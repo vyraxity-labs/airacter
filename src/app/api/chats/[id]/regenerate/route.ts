@@ -2,6 +2,7 @@ import { db } from '@/lib/db'
 import { NextResponse } from 'next/server'
 import { getUserTokenBalance } from '@/lib/tokens'
 import { streamChatResponse, countTokens, ChatMessage } from '@/lib/ai-gateway'
+import { Direction, TransactionType } from '@/generated/prisma/enums'
 
 interface RouteParams {
   params: Promise<{
@@ -148,8 +149,8 @@ export async function POST(request: Request, { params }: RouteParams) {
           await db.tokenTransaction.create({
             data: {
               userId,
-              type: 'debit_message',
-              direction: 'debit',
+              type: TransactionType.debit_message,
+              direction: Direction.debit,
               amount: totalTokens,
               referenceId: assistantMessage.id,
               metadata: {
@@ -199,8 +200,8 @@ export async function POST(request: Request, { params }: RouteParams) {
               await db.tokenTransaction.create({
                 data: {
                   userId,
-                  type: 'debit_message',
-                  direction: 'debit',
+                  type: TransactionType.debit_message,
+                  direction: Direction.debit,
                   amount: totalTokens,
                   referenceId: assistantMessage.id,
                   metadata: {

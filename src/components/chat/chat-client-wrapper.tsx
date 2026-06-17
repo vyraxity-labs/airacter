@@ -7,6 +7,7 @@ import { ChatSidebar } from './chat-sidebar'
 import { ChatFeed } from './chat-feed'
 import { MessageSquare } from 'lucide-react'
 import { Chat } from '@/models/chat/type'
+import { Message } from '@/models/message/type'
 
 interface ChatClientWrapperProps {
   user: {
@@ -32,7 +33,7 @@ export function ChatClientWrapper({
 }: ChatClientWrapperProps) {
   const router = useRouter()
   const [tokenBalance, setTokenBalance] = useState(initialTokenBalance)
-  const [messages, setMessages] = useState<any[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
   const [isLoadingMessages, setIsLoadingMessages] = useState(false)
 
   const activeChat = chats.find((c) => c.id === activeChatId)
