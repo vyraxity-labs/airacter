@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { DashboardShell } from '@/components/dashboard-shell'
 import { MySidebar } from './my-sidebar'
 import { LibrarySearch } from './library-search'
-import { CharacterCard } from '@/components/character-card'
+import { CharacterCard } from '@/components/character/character-card'
 import { cn } from '@/lib/utils'
 import { Compass, Plus } from 'lucide-react'
 import Link from 'next/link'
@@ -197,7 +197,7 @@ export default async function MyCharactersPage({
 
           {/* Featured Engine Promo Banner */}
           {tab === 'all' && !q && (
-            <section className='relative rounded-[24px] overflow-hidden bg-gradient-to-r from-primary/80 to-secondary p-10 flex items-center justify-between group shadow-lg shadow-primary-container/10 border border-white/5 select-none'>
+            <section className='relative rounded-[24px] overflow-hidden bg-linear-to-r from-primary/80 to-secondary p-10 flex items-center justify-between group shadow-lg shadow-primary-container/10 border border-white/5 select-none'>
               <div className='z-10 max-w-lg'>
                 <span className='bg-white/20 border border-white/10 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full mb-4 inline-block uppercase tracking-wider'>
                   New Release
