@@ -4,6 +4,7 @@ import { getUserTokenBalance } from '@/lib/tokens'
 import { streamChatResponse, countTokens, ChatMessage } from '@/lib/ai-gateway'
 import { z } from 'zod'
 import { autoTitleChat } from '@/lib/auto-titling'
+import { Direction, TransactionType } from '@/generated/prisma/enums'
 
 const messageCreateSchema = z.object({
   content: z.string().min(1, 'Message content cannot be empty'),
@@ -200,8 +201,8 @@ export async function POST(request: Request, { params }: RouteParams) {
           await db.tokenTransaction.create({
             data: {
               userId,
-              type: 'debit_message',
-              direction: 'debit',
+              type: TransactionType.debit_message,
+              direction: Direction.debit,
               amount: totalTokens,
               referenceId: assistantMessage.id,
               metadata: {
@@ -251,8 +252,8 @@ export async function POST(request: Request, { params }: RouteParams) {
               await db.tokenTransaction.create({
                 data: {
                   userId,
-                  type: 'debit_message',
-                  direction: 'debit',
+                  type: TransactionType.debit_message,
+                  direction: Direction.debit,
                   amount: totalTokens,
                   referenceId: assistantMessage.id,
                   metadata: {

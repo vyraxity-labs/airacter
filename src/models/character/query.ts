@@ -17,3 +17,15 @@ export const getTrendingCharacters = async () => {
 
   return trendingCharacters
 }
+
+export const findCharacterBySlug = async (slug: string) => {
+  try {
+    const character = await db.character.findUnique({
+      where: { slug },
+    })
+    return character
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}

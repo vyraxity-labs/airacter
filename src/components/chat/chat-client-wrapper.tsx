@@ -6,6 +6,8 @@ import { DashboardShell } from '@/components/dashboard-shell'
 import { ChatSidebar } from './chat-sidebar'
 import { ChatFeed } from './chat-feed'
 import { MessageSquare } from 'lucide-react'
+import { Chat } from '@/models/chat/type'
+import { Message } from '@/models/message/type'
 
 interface ChatClientWrapperProps {
   user: {
@@ -13,9 +15,13 @@ interface ChatClientWrapperProps {
     email?: string | null
     image?: string | null
   }
-  chats: any[]
+  chats: Chat[]
   activeChatId: string
   initialTokenBalance: number
+  error: {
+    hasError: boolean
+    message: string
+  }
 }
 
 export function ChatClientWrapper({
@@ -23,10 +29,11 @@ export function ChatClientWrapper({
   chats,
   activeChatId,
   initialTokenBalance,
+  error = { hasError: false, message: '' },
 }: ChatClientWrapperProps) {
   const router = useRouter()
   const [tokenBalance, setTokenBalance] = useState(initialTokenBalance)
-  const [messages, setMessages] = useState<any[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
   const [isLoadingMessages, setIsLoadingMessages] = useState(false)
 
   const activeChat = chats.find((c) => c.id === activeChatId)
@@ -112,6 +119,7 @@ export function ChatClientWrapper({
           activeChatId={activeChatId}
           onDeleteChat={handleDeleteChat}
           onRenameChat={handleRenameChat}
+          errorMessage={error.message}
         />
       }
     >
@@ -125,7 +133,7 @@ export function ChatClientWrapper({
           setTokenBalance={setTokenBalance}
         />
       ) : (
-        <div className='flex-grow flex flex-col items-center justify-center p-8 text-center select-none bg-background relative'>
+        <div className='grow flex flex-col items-center justify-center p-8 text-center select-none bg-background relative'>
           {/* Ambient visual background glow effects */}
           <div className='absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none' />
           <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-[100px] pointer-events-none' />

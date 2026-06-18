@@ -1,4 +1,4 @@
-import { Character } from '@/models/character/types'
+import { FeaturedCharacter } from '@/models/character/types'
 import { User } from '@/models/user/types'
 import LandingHeader from './layout/landing-header'
 import Hero from './landing/hero'
@@ -8,7 +8,7 @@ import LandingFooter from './layout/landing-footer'
 
 interface LandingClientProps {
   user: User | null
-  featuredCharacters: Character[]
+  featuredCharacters: FeaturedCharacter[]
 }
 
 export function LandingClient({
