@@ -23,7 +23,7 @@ const LibraryCharacterRender = ({
 }: LibraryCharacterRenderProps) => {
   const router = useRouter()
 
-  const handleEditRedirect = (e: React.MouseEvent) => {
+  const handleEditRedirect = (e: MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     router.push(`/characters/${character.id}/edit`)

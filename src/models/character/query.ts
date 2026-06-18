@@ -62,6 +62,7 @@ export const getFilterableCharacters = async (
 export const getIdOfCharactersSavedByUser = async (
   userId: string | undefined,
 ) => {
+  if (!userId) return []
   return db.characterSave.findMany({
     where: { userId },
     select: { characterId: true },
@@ -82,7 +83,11 @@ export const runExplorePageQuery = async (
     visibility: 'public',
   }
 
-  if (category && category !== 'all') {
+  if (
+    category &&
+    category !== 'all' &&
+    Object.values(Category).includes(category as Category)
+  ) {
     where.category = category as Category
   }
 
