@@ -31,3 +31,30 @@ export type FeaturedCharacter = Omit<
   | 'isFeatured'
   | 'visibility'
 >
+
+export type TrendingCharacter = {
+  creator: {
+    id: string
+    name: string | null
+    image: string | null
+  }
+} & {
+  slug: string
+  id: string
+  avatarType: AvatarType
+  avatarValue: string
+  name: string
+  avatarColor: string
+  category: Category
+  description: string
+  systemPrompt: string
+  tone: string[]
+  visibility: Visibility
+  isVerified: boolean
+  isFeatured: boolean
+  usageCount: number
+  saveCount: number
+  createdBy: string
+  createdAt: Date
+  updatedAt: Date
+}
