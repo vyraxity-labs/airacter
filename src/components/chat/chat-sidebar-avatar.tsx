@@ -1,10 +1,10 @@
 'use client'
 
-import { Character } from '@/generated/prisma/client'
 import { getInitials } from '@/models/character/helper'
+import { Chat } from '@/models/chat/type'
 import { useState } from 'react'
 
-const ChatSidebarAvatar = ({ character }: { character: Character }) => {
+const ChatSidebarAvatar = ({ character }: { character: Chat['character'] }) => {
   const [imageError, setImageError] = useState(false)
 
   if (
