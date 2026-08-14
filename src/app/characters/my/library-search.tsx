@@ -51,7 +51,7 @@ export function LibrarySearch({
     }, 450)
 
     return () => clearTimeout(delayDebounce)
-  }, [searchVal])
+  }, [searchVal, currentQ, searchParams, router])
 
   return (
     <div className='relative group select-none'>

@@ -83,7 +83,7 @@ export async function MySidebar() {
                     <span>
                       {char.avatarType === 'emoji'
                         ? char.avatarValue
-                        : char.avatarValue.substring(0, 2).toUpperCase()}
+                        : char.avatarValue?.substring(0, 2).toUpperCase() || ''}
                     </span>
                   </div>
                 )}

@@ -123,6 +123,8 @@ export const getCharactersCreatedByUser = async (
   userId: string | undefined,
   q: string,
 ) => {
+  if (!userId) return []
+
   const characters = await db.character.findMany({
     where: {
       createdBy: userId,
@@ -148,6 +150,8 @@ export const getCharactersSavedByUser = async (
   userId: string | undefined,
   q: string,
 ) => {
+  if (!userId) return []
+
   const saves = await db.characterSave.findMany({
     where: {
       userId: userId,
@@ -180,6 +184,8 @@ export const getCharactersByTabs = async (
   userId: string | undefined,
   q: string,
 ) => {
+  if (!userId) return []
+
   let characters: TrendingCharacter[] = []
   if (tab === 'created') {
     characters = await getCharactersCreatedByUser(userId, q)

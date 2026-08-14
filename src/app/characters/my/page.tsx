@@ -56,8 +56,8 @@ export default async function MyCharactersPage({
         {/* Content Area */}
         <div className='flex-1 overflow-y-auto p-6 md:p-8 space-y-8 custom-scrollbar pb-24'>
           {/* Glowing Background Ambience */}
-          <div className='fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/5 blur-[120px] -z-10 pointer-events-none'></div>
-          <div className='fixed bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-secondary/5 blur-[150px] -z-10 pointer-events-none'></div>
+          <div className='fixed top-[-10%] right-[-10%] w-125 h-125 bg-primary/5 blur-[120px] -z-10 pointer-events-none'></div>
+          <div className='fixed bottom-[-10%] left-[-10%] w-150 h-150 bg-secondary/5 blur-[150px] -z-10 pointer-events-none'></div>
 
           {/* Featured Engine Promo Banner */}
           {tab === 'all' && !q && <AllTab />}
