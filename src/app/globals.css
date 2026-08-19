@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   /* System Font Families */
@@ -47,13 +51,15 @@
   --background: #f8fafc;
   --foreground: #0f172a;
   
-  --primary: #0ea5e9; /* Sky blue / Teal override */
+  --primary: #0ea5e9; /* Sky blue / Teal */
+  --primary-foreground: #ffffff;
   --primary-container: #e0f2fe;
   
-  --secondary: #7c3aed; /* Violet override */
+  --secondary: #7c3aed; /* Violet */
+  --secondary-foreground: #ffffff;
   --secondary-container: #f3e8ff;
   
-  --tertiary: #f472b6; /* Pink override */
+  --tertiary: #f472b6; /* Pink */
   --tertiary-container: #fce7f3;
   
   --surface: #ffffff;
@@ -78,6 +84,26 @@
   --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(148, 163, 184, 0.15);
   --glass-blur: 12px;
+
+  /* shadcn UI defaults */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #0ea5e9;
+  
+  --radius: 0.75rem;
+
+  --btn-gradient-start: #0ea5e9;
+  --btn-gradient-end: #7c3aed;
 }
 
 .dark {
@@ -85,14 +111,16 @@
   --background: #0b1326;
   --foreground: #dae2fd;
   
-  --primary: #0ea5e9; /* Teal primary */
-  --primary-container: #00344d;
+  --primary: #89ceff; /* Match Stitch: primary */
+  --primary-foreground: #00344d; /* Match Stitch: on-primary */
+  --primary-container: #0ea5e9; /* Match Stitch: primary-container */
   
-  --secondary: #7c3aed; /* Purple secondary */
-  --secondary-container: #3f008e;
+  --secondary: #d2bbff; /* Match Stitch: secondary */
+  --secondary-foreground: #3f008e; /* Match Stitch: on-secondary */
+  --secondary-container: #6001d1; /* Match Stitch: secondary-container */
   
   --tertiary: #ffafd3;
-  --tertiary-container: #620040;
+  --tertiary-container: #f06eb2; /* Match Stitch: tertiary-container */
   
   --surface: #0b1326;
   --surface-dim: #0b1326;
@@ -113,9 +141,27 @@
   --error: #ffb4ab;
   --on-error: #690005;
 
-  --glass-bg: rgba(23, 31, 51, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: 16px;
+  --glass-bg: rgba(23, 31, 51, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: 12px;
+
+  /* shadcn UI defaults */
+  --card: #171f33;
+  --card-foreground: #dae2fd;
+  --popover: #131b2e;
+  --popover-foreground: #dae2fd;
+  --muted: #171f33;
+  --muted-foreground: #bec8d2;
+  --accent: #222a3d;
+  --accent-foreground: #dae2fd;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #89ceff;
+
+  --btn-gradient-start: #0ea5e9;
+  --btn-gradient-end: #6001d1;
 }
 
 body {
@@ -147,15 +193,120 @@ body {
 
 /* Gradient effects button style */
 .btn-gradient {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--btn-gradient-start) 0%, var(--btn-gradient-end) 100%);
   color: #ffffff;
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  transition: opacity 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
 }
 
 .btn-gradient:hover {
-  opacity: 0.92;
+  opacity: 0.95;
+  box-shadow: 0 0 30px rgba(14, 165, 233, 0.5);
+  transform: translateY(-1px);
 }
 
 .btn-gradient:active {
   transform: scale(0.98);
+}
+
+/* Gradient primary card style */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--btn-gradient-start) 0%, var(--btn-gradient-end) 100%);
+  color: #ffffff;
+}
+
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-sans);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Custom markdown rendering styles for AI responses */
+.markdown-content p {
+  margin-bottom: 0.75rem;
+  line-height: 1.625;
+}
+.markdown-content p:last-child {
+  margin-bottom: 0;
+}
+.markdown-content ul {
+  list-style-type: disc;
+  margin-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+.markdown-content ol {
+  list-style-type: decimal;
+  margin-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+.markdown-content li {
+  margin-bottom: 0.25rem;
+}
+.markdown-content code {
+  background-color: var(--surface-lowest);
+  padding: 0.125rem 0.35rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.85em;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.markdown-content pre[class*="language-"],
+.markdown-content pre {
+  background-color: var(--surface-lowest) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 0.85rem !important;
+  overflow-x: auto !important;
+  margin-bottom: 0.75rem;
+}
+.markdown-content code[class*="language-"],
+.markdown-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+.markdown-content pre code {
+  background-color: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  border: none !important;
 }
