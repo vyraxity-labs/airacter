@@ -33,6 +33,7 @@ model User {
   chats          Chat[]
   transactions   TokenTransaction[]
   reports        CharacterReport[]
+  grants         TokenGrant[]
 }
 
 model Account {
@@ -227,3 +228,16 @@ model CharacterReport {
   character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [reportedBy], references: [id], onDelete: Cascade)
 }
+
+model TokenGrant {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String    // welcome | subscription | purchase | admin
+  amount    Int
+  remaining Int
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
