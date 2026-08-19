@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
 import { Direction, TransactionType } from '@/generated/prisma/enums'
+import { Prisma } from '@/generated/prisma/client'
 
 /**
  * Calculates a user's current token balance from their active, unexpired TokenGrants.
@@ -34,6 +35,7 @@ export async function creditTokens(
   amount: number,
   expiresAt?: Date | null,
   metadata?: any,
+  prismaClient?: Prisma.TransactionClient,
 ): Promise<void> {
   try {
     // Map internal type to TransactionType enum
@@ -53,7 +55,7 @@ export async function creditTokens(
         transactionType = TransactionType.credit_admin
     }
 
-    await db.$transaction(async (tx) => {
+    const execute = async (tx: Prisma.TransactionClient) => {
       // 1. Create the TokenGrant
       await tx.tokenGrant.create({
         data: {
@@ -75,7 +77,13 @@ export async function creditTokens(
           metadata: metadata || {},
         },
       })
-    })
+    }
+
+    if (prismaClient) {
+      await execute(prismaClient)
+    } else {
+      await db.$transaction(execute)
+    }
   } catch (error) {
     console.error('Failed to credit tokens:', error)
     throw new Error('Failed to credit tokens')
@@ -92,13 +100,14 @@ export async function debitTokens(
   referenceId?: string | null,
   metadata?: any,
   type: TransactionType = TransactionType.debit_message,
+  prismaClient?: Prisma.TransactionClient,
 ): Promise<void> {
   if (amount <= 0) {
     throw new Error('Debit amount must be greater than zero')
   }
 
   try {
-    await db.$transaction(async (tx) => {
+    const execute = async (tx: Prisma.TransactionClient) => {
       // 1. Query all active, unexpired grants for this user with FOR UPDATE row-level locking.
       // This prevents concurrent requests from double-spending the same remaining tokens.
       const grants = await tx.$queryRaw<
@@ -150,7 +159,13 @@ export async function debitTokens(
           metadata: metadata || {},
         },
       })
-    })
+    }
+
+    if (prismaClient) {
+      await execute(prismaClient)
+    } else {
+      await db.$transaction(execute)
+    }
   } catch (error: any) {
     // If it's our own custom error, rethrow it directly
     if (

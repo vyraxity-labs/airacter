@@ -1,7 +1,8 @@
 import { db } from '@/lib/db'
-import { getUserTokenBalance } from '@/lib/tokens'
+import { getUserTokenBalance, creditTokens, debitTokens } from '@/lib/tokens'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import { TransactionType } from '@/generated/prisma/enums'
 
 const adjustSchema = z.object({
   email: z.string().email(),
@@ -53,35 +54,39 @@ export async function POST(request: Request) {
     }
 
     const direction = amount > 0 ? 'credit' : 'debit'
-    const type = amount > 0 ? 'credit_admin' : 'debit_refund'
     const absoluteAmount = Math.abs(amount)
 
-    if (direction === 'debit') {
-      const currentBalance = await getUserTokenBalance(user.id)
-      if (currentBalance < absoluteAmount) {
-        return NextResponse.json(
+    if (direction === 'credit') {
+      await creditTokens(user.id, 'admin', absoluteAmount, null, {
+        reason,
+        adminUserId: userId,
+        adminDescription: `Manual adjustment by administrator. Reason: ${reason}`,
+      })
+    } else {
+      try {
+        await debitTokens(
+          user.id,
+          absoluteAmount,
+          null,
           {
-            error: `Insufficient balance. User only has ${currentBalance} tokens, but attempted to debit ${absoluteAmount}.`,
+            reason,
+            adminUserId: userId,
+            adminDescription: `Manual adjustment by administrator. Reason: ${reason}`,
           },
-          { status: 400 },
+          TransactionType.debit_refund
         )
+      } catch (err: any) {
+        if (err.message === 'Insufficient token balance') {
+          return NextResponse.json(
+            {
+              error: `Insufficient balance. User does not have enough tokens. Attempted to debit ${absoluteAmount}.`,
+            },
+            { status: 400 },
+          )
+        }
+        throw err
       }
     }
-
-    // Atomically create the token transaction record
-    await db.tokenTransaction.create({
-      data: {
-        userId: user.id,
-        type,
-        direction,
-        amount: absoluteAmount,
-        metadata: {
-          reason,
-          adminUserId: userId,
-          adminDescription: `Manual adjustment by administrator. Reason: ${reason}`,
-        },
-      },
-    })
 
     // Recompute balance
     const newBalance = await getUserTokenBalance(user.id)
