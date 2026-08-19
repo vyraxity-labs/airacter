@@ -43,17 +43,10 @@ export const authConfig = {
       // Protect all other dashboard routes
       return isLoggedIn
     },
-    jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.role = (user as any).role || Role.USER
-      }
-      return token
-    },
-    session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string
-        ;(session.user as any).role = token.role as string
+    session({ session, user }) {
+      if (session.user && user) {
+        session.user.id = user.id
+        ;(session.user as any).role = (user as any).role || Role.USER
       }
       return session
     },
