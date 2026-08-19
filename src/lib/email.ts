@@ -1,5 +1,6 @@
 import { BrevoClient } from '@getbrevo/brevo'
 import { STARTING_TOKEN } from './constants'
+import { getRequiredEnv } from './env'
 
 const getBrevoClient = () => {
   const apiKey = process.env.BREVO_API_KEY
@@ -12,10 +13,13 @@ const getBrevoClient = () => {
   return new BrevoClient({ apiKey })
 }
 
+const emailFrom = getRequiredEnv('SMTP_FROM')
+const appDomain = getRequiredEnv('NEXT_PUBLIC_APP_URL')
+
 export async function sendVerificationEmail(email: string, token: string) {
   const client = getBrevoClient()
-  const from = process.env.SMTP_FROM || 'olalekanbello534@gmail.com'
-  const verificationLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/verify?token=${token}`
+  const from = emailFrom
+  const verificationLink = `${appDomain}/auth/verify?token=${token}`
 
   const subject = 'Verify your email - Airacter'
   const html = `
