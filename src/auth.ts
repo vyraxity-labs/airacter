@@ -7,7 +7,8 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { STARTING_TOKEN } from '@/lib/constants'
 import { DUMMY_PASSWORD_HASH } from './auth.constants'
-import { Direction, TransactionType } from './generated/prisma/enums'
+import { TransactionType } from '@/generated/prisma/enums'
+import { creditTokens } from '@/lib/tokens'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -67,16 +68,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
 
         if (!existingTransaction) {
-          await db.tokenTransaction.create({
-            data: {
-              userId: user.id,
-              type: TransactionType.credit_welcome,
-              direction: Direction.credit,
-              amount: STARTING_TOKEN,
-              metadata: {
-                reason: 'Welcome bonus (OAuth)',
-              },
-            },
+          await creditTokens(user.id, 'welcome', STARTING_TOKEN, null, {
+            reason: 'Welcome bonus (OAuth)',
           })
           console.log(
             `[NextAuth] Credited OAuth starter tokens to user ${user.id} (${user.email})`,

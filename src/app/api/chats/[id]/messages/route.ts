@@ -1,10 +1,10 @@
 import { db } from '@/lib/db'
 import { after, NextResponse } from 'next/server'
-import { getUserTokenBalance } from '@/lib/tokens'
+import { getUserTokenBalance, debitTokens } from '@/lib/tokens'
 import { streamChatResponse, countTokens, ChatMessage } from '@/lib/ai-gateway'
 import { z } from 'zod'
 import { autoTitleChat } from '@/lib/auto-titling'
-import { Direction, TransactionType } from '@/generated/prisma/enums'
+import { TransactionType } from '@/generated/prisma/enums'
 
 const messageCreateSchema = z.object({
   content: z.string().min(1, 'Message content cannot be empty'),
@@ -197,21 +197,18 @@ export async function POST(request: Request, { params }: RouteParams) {
           ])
           const totalTokens = inputTokens + outputTokens
 
-          // 8. Log debit token transaction
-          await db.tokenTransaction.create({
-            data: {
-              userId,
-              type: TransactionType.debit_message,
-              direction: Direction.debit,
-              amount: totalTokens,
-              referenceId: assistantMessage.id,
-              metadata: {
-                inputTokens,
-                outputTokens,
-                chatId: id,
-              },
+          // 8. Log debit token transaction (canonical FIFO method)
+          await debitTokens(
+            userId,
+            totalTokens,
+            assistantMessage.id,
+            {
+              inputTokens,
+              outputTokens,
+              chatId: id,
             },
-          })
+            TransactionType.debit_message
+          )
 
           // Enqueue termination SSE containing exact transaction metrics
           controller.enqueue(
@@ -249,21 +246,18 @@ export async function POST(request: Request, { params }: RouteParams) {
               ])
               const totalTokens = inputTokens + outputTokens
 
-              await db.tokenTransaction.create({
-                data: {
-                  userId,
-                  type: TransactionType.debit_message,
-                  direction: Direction.debit,
-                  amount: totalTokens,
-                  referenceId: assistantMessage.id,
-                  metadata: {
-                    inputTokens,
-                    outputTokens,
-                    interrupted: true,
-                    chatId: id,
-                  },
+              await debitTokens(
+                userId,
+                totalTokens,
+                assistantMessage.id,
+                {
+                  inputTokens,
+                  outputTokens,
+                  interrupted: true,
+                  chatId: id,
                 },
-              })
+                TransactionType.debit_message
+              )
             } catch (dbErr) {
               console.error('Failed to save partial response:', dbErr)
             }

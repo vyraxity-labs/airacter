@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { STARTING_TOKEN } from "@/lib/constants";
+import { creditTokens } from "@/lib/tokens";
 
 export async function POST(request: Request) {
   try {
@@ -43,18 +44,10 @@ export async function POST(request: Request) {
         },
       });
 
-      // Credit welcome tokens
-      await tx.tokenTransaction.create({
-        data: {
-          userId: user.id,
-          type: "credit_welcome",
-          direction: "credit",
-          amount: STARTING_TOKEN,
-          metadata: {
-            reason: "Welcome bonus",
-          },
-        },
-      });
+      // Credit welcome tokens (canonical method passing tx client)
+      await creditTokens(user.id, "welcome", STARTING_TOKEN, null, {
+        reason: "Welcome bonus",
+      }, tx);
 
       // Clean up spent token
       await tx.verificationToken.delete({
