@@ -10,27 +10,29 @@ import { Card, CardContent } from '@/components/ui/card'
 import GoogleOAuthLogin from './google-oauth-login'
 import Logo from '../general/logo'
 import RegisteredSuccessView from './registered-success-view'
+import { useTranslation } from '@/lib/i18n/client'
 
 const RegisterContent = () => {
+  const { t } = useTranslation('auth')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [registered, setRegistered] = useState(false)
+  const [registered, setRegistered] = useState(true)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.')
+      setError(t('register.error_passwords_dont_match'))
       return
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters long.')
+      setError(t('register.error_password_too_short'))
       return
     }
 
@@ -52,28 +54,26 @@ const RegisterContent = () => {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || 'Failed to register. Please try again.')
+        setError(data.error || t('register.error_failed_to_register'))
       } else {
         setRegistered(true)
       }
     } catch (err: any) {
-      setError('An unexpected network error occurred.')
+      setError(t('register.error_network'))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className='relative z-10 w-full max-w-[1000px] grid md:grid-cols-2 gap-12 px-4 py-8 items-center'>
+    <div className='relative z-10 w-full max-w-250 grid md:grid-cols-2 gap-12 px-4 py-8 items-center'>
       {/* Brand Narrative Column (Desktop Only) */}
       {!registered && (
         <div className='hidden md:flex flex-col justify-center space-y-8 pr-6'>
           <div className='space-y-4'>
             <Logo size='large' variant='horizontal' href='/' />
             <p className='text-lg text-on-surface-variant max-w-md leading-relaxed'>
-              Join the premier platform for AI personas. Craft, interact, and
-              evolve your digital companions in a professional playground
-              designed for creators.
+              {t('register.narrative_text')}
             </p>
           </div>
 
@@ -83,10 +83,10 @@ const RegisterContent = () => {
               <CardContent className='p-0 space-y-2'>
                 <Sparkles size={24} className='text-primary' />
                 <h3 className='font-semibold text-sm text-foreground'>
-                  Persona Flow
+                  {t('register.feature_persona_flow_title')}
                 </h3>
                 <p className='text-xs text-on-surface-variant leading-relaxed'>
-                  Persistent prompts with rich contextual reasoning.
+                  {t('register.feature_persona_flow_desc')}
                 </p>
               </CardContent>
             </Card>
@@ -94,10 +94,10 @@ const RegisterContent = () => {
               <CardContent className='p-0 space-y-2'>
                 <User size={24} className='text-secondary' />
                 <h3 className='font-semibold text-sm text-foreground'>
-                  Character Hub
+                  {t('register.feature_character_hub_title')}
                 </h3>
                 <p className='text-xs text-on-surface-variant leading-relaxed'>
-                  Discover public personas or build private companions.
+                  {t('register.feature_character_hub_desc')}
                 </p>
               </CardContent>
             </Card>
@@ -118,10 +118,10 @@ const RegisterContent = () => {
             <CardContent className='p-0 flex flex-col gap-5'>
               <div className='mb-2 text-center md:text-left'>
                 <h2 className='text-2xl font-bold text-foreground mb-1'>
-                  Create Account
+                  {t('register.create_account_title')}
                 </h2>
                 <p className='text-sm text-on-surface-variant'>
-                  Enter your details to start your journey.
+                  {t('register.create_account_subtitle')}
                 </p>
               </div>
 
@@ -138,7 +138,7 @@ const RegisterContent = () => {
                     htmlFor='name'
                     className='text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider'
                   >
-                    Full Name
+                    {t('register.full_name_label')}
                   </Label>
                   <div className='relative group'>
                     <span className='absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/70 group-focus-within:text-primary transition-colors z-10'>
@@ -162,7 +162,7 @@ const RegisterContent = () => {
                     htmlFor='email'
                     className='text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider'
                   >
-                    Email Address
+                    {t('register.email_label')}
                   </Label>
                   <div className='relative group'>
                     <span className='absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/70 group-focus-within:text-primary transition-colors z-10'>
@@ -181,13 +181,13 @@ const RegisterContent = () => {
                   </div>
                 </div>
 
-                <div className='grid grid-cols-2 gap-4'>
+                <div className='flex flex-col 2xl:grid grid-cols-2 gap-4'>
                   <div className='space-y-1'>
                     <Label
                       htmlFor='password'
                       className='text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider'
                     >
-                      Password
+                      {t('register.password_label')}
                     </Label>
                     <Input
                       id='password'
@@ -205,7 +205,7 @@ const RegisterContent = () => {
                       htmlFor='confirmPassword'
                       className='text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider'
                     >
-                      Confirm
+                      {t('register.confirm_password_label')}
                     </Label>
                     <Input
                       id='confirmPassword'
@@ -227,7 +227,9 @@ const RegisterContent = () => {
                   className='h-12 w-full rounded-2xl font-semibold flex items-center justify-center gap-2 mt-6 cursor-pointer'
                 >
                   <span>
-                    {loading ? 'Creating Account...' : 'Create Account'}
+                    {loading
+                      ? t('register.creating_account_button')
+                      : t('register.create_account_button_text')}
                   </span>
                   {!loading && <ArrowRight size={16} />}
                 </Button>
@@ -237,12 +239,12 @@ const RegisterContent = () => {
               <GoogleOAuthLogin loading={loading} />
 
               <p className='mt-6 text-center text-sm text-on-surface-variant'>
-                Already have an account?
+                {t('register.already_have_account_label')}
                 <Link
                   href='/auth/login'
                   className='text-primary font-semibold hover:text-primary/80 transition-colors ml-1'
                 >
-                  Login
+                  {t('register.login_link')}
                 </Link>
               </p>
             </CardContent>

@@ -1,0 +1,19 @@
+{
+  "hub_title": "Centre de Personnages",
+  "create_character": "Créer un Personnage",
+  "edit_character": "Modifier le Personnage",
+  "character_name": "Nom du Personnage",
+  "character_role": "Rôle / Description",
+  "system_prompt": "Prompt Système / Instructions",
+  "language": "Langue",
+  "voice": "Voix",
+  "avatar": "Image de l'Avatar",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "creator": "Créateur",
+  "public": "Public",
+  "private": "Privé",
+  "library_search_placeholder": "Rechercher des personnages...",
+  "no_characters_found": "Aucun personnage trouvé",
+  "delete_character_confirm": "Êtes-vous sûr de vouloir supprimer ce personnage ?"
+}

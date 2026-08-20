@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n/client'
 import { cn } from '@/lib/utils'
 import { Sparkles } from 'lucide-react'
 import Link from 'next/link'
@@ -16,6 +19,8 @@ const Logo = ({
   variant = 'horizontal',
   size = 'medium',
 }: LogoProps) => {
+  const { t } = useTranslation('common')
+
   const textSizeMap = {
     text: 'text-base',
     icon: 'text-lg',
@@ -43,7 +48,7 @@ const Logo = ({
     <LogoWrapper href={href} className={variantMap[variant]}>
       <div
         className={cn(
-          'bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-sm shadow-primary/20',
+          'bg-linear-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-sm shadow-primary/20',
           roundMap[size],
         )}
         style={{
@@ -60,7 +65,7 @@ const Logo = ({
             textSizeMap[size],
           )}
         >
-          Airacter
+          {t('app_name')}
         </span>
       )}
     </LogoWrapper>

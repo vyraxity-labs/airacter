@@ -6,10 +6,12 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import Logout from './logout'
 import ThemeUI from './theme-ui'
+import { useTranslation } from '@/lib/i18n/client'
 
 const MobileBottomNav = () => {
   const pathname = usePathname() || ''
   const navItems = getNavItems(pathname)
+  const { t } = useTranslation('common')
 
   return (
     <div className='md:hidden fixed bottom-0 left-0 w-full z-40 pointer-events-none'>
@@ -22,6 +24,9 @@ const MobileBottomNav = () => {
       <nav className='h-16 bg-surface-lowest/90 backdrop-blur-xl border-t border-border flex items-center justify-around px-4 theme-transition pointer-events-auto'>
         {navItems.map((item) => {
           const Icon = item.icon
+          const translatedLabel = t(
+            `side_bottom_bar.${item.label.toLowerCase()}`,
+          )
           return (
             <Link
               key={item.href}
@@ -35,7 +40,7 @@ const MobileBottomNav = () => {
             >
               <Icon size={18} />
               <span className='text-[10px] mt-1 font-medium leading-none'>
-                {item.label}
+                {translatedLabel}
               </span>
             </Link>
           )

@@ -7,6 +7,7 @@ import EmptyErrorUI from './empty-error-ui'
 import { Chat } from '@/models/chat/type'
 import SingleChat from './single-chat'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface ChatSidebarProps {
   chats: Chat[]
@@ -23,6 +24,7 @@ export function ChatSidebar({
   onRenameChat,
   errorMessage,
 }: ChatSidebarProps) {
+  const { t } = useTranslation('chat')
   const [searchQuery, setSearchQuery] = useState('')
   const [displayChats, setDisplayChats] = useState<Chat[]>(chats)
   const [isSearching, setIsSearching] = useState(false)
@@ -103,14 +105,14 @@ export function ChatSidebar({
       <div className='p-4 border-b border-border/40 flex flex-col gap-3'>
         <div className='flex items-center justify-between'>
           <span className='font-bold text-sm text-on-surface'>
-            Conversations
+            {t('sidebar.conversations')}
           </span>
           <Link
             href='/explore'
             className='p-1.5 rounded-lg border border-border/30 bg-surface-container hover:bg-surface-container-high text-primary hover:text-primary-container transition-colors flex items-center gap-1 text-[11px] font-bold'
           >
             <Compass size={12} />
-            New
+            {t('sidebar.new_chat')}
           </Link>
         </div>
 
@@ -136,7 +138,9 @@ export function ChatSidebar({
                 className='block text-[9px] uppercase font-extrabold tracking-widest text-outline px-3 mb-1.5'
                 suppressHydrationWarning
               >
-                {groupName}
+                {t(
+                  `sidebar.group.group_${groupName.toLowerCase().replace(/ /g, '_')}`,
+                )}
               </span>
 
               <div className='space-y-1'>

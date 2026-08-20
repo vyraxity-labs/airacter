@@ -5,6 +5,7 @@ import { Message } from '@/models/message/type'
 import { Send } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Dispatch, KeyboardEvent, RefObject, SetStateAction } from 'react'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface ChatInputFormProps {
   isStreaming: boolean
@@ -34,6 +35,7 @@ const ChatInputForm = ({
   textareaRef,
 }: ChatInputFormProps) => {
   const router = useRouter()
+  const { t } = useTranslation('chat')
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -66,12 +68,12 @@ const ChatInputForm = ({
 
       if (!response.ok) {
         if (response.status === 402) {
-          throw new Error(
-            'Insufficient token balance. Please recharge your tokens.',
-          )
+          throw new Error(t('main.input.insufficient_tokens'))
         }
         const errData = await response.json()
-        throw new Error(errData.error || 'Failed to dispatch message')
+        throw new Error(
+          errData.error || t('main.input.error_failed_to_dispatch'),
+        )
       }
 
       router.refresh()
@@ -79,7 +81,7 @@ const ChatInputForm = ({
       // Read SSE stream
       const reader = response.body?.getReader()
       const decoder = new TextDecoder()
-      if (!reader) throw new Error('ReadableStream not supported')
+      if (!reader) throw new Error(t('main.input.stream_unsupported'))
 
       let currentResponseText = ''
       let buffer = ''
@@ -129,7 +131,7 @@ const ChatInputForm = ({
       }
     } catch (err: any) {
       console.error(err)
-      setErrorMsg(err.message || 'Failed to generate AI response. Try again.')
+      setErrorMsg(err.message || t('main.input.error_failed_to_generate'))
     } finally {
       setIsStreaming(false)
       setStreamingMessage('')
@@ -148,18 +150,21 @@ const ChatInputForm = ({
             rows={1}
             placeholder={
               tokenBalance <= 0
-                ? 'Insufficient token balance. Please recharge.'
-                : `Message ${activeChat.character.name}...`
+                ? t('main.input.insufficient_tokens')
+                : t('main.input.message_character_placeholder', {
+                    name: activeChat.character.name,
+                    defaultValue: `Message ${activeChat.character.name}...`,
+                  })
             }
             disabled={isStreaming || tokenBalance <= 0}
-            className='w-full bg-transparent text-xs text-on-surface focus:outline-none resize-none px-4 pt-3 pb-2 max-h-40 min-h-[38px] placeholder:text-outline/70 disabled:opacity-50'
+            className='w-full bg-transparent text-xs text-on-surface focus:outline-none resize-none px-4 pt-3 pb-2 max-h-40 min-h-9.5 placeholder:text-outline/70 disabled:opacity-50'
           />
           <div className='flex items-center justify-between pt-2 border-t border-border/10 px-4 pb-1'>
             <div className='flex items-center gap-2'>
               {inputMessage.trim() && (
                 <span className='px-2.5 py-0.5 rounded-full text-[9px] font-extrabold tracking-wider bg-primary/10 border border-primary/20 text-primary animate-fade-in'>
-                  ~{Math.max(1, Math.ceil(inputMessage.length / 4))} TOKENS
-                  ESTIMATE
+                  ~{Math.max(1, Math.ceil(inputMessage.length / 4))}{' '}
+                  {t('main.input.tokens_estimate')}
                 </span>
               )}
             </div>
@@ -176,7 +181,7 @@ const ChatInputForm = ({
         </div>
       </form>
       <p className='text-[8px] text-center mt-2.5 text-outline font-extrabold uppercase tracking-widest select-none'>
-        Powered by Google Gemini
+        {t('main.input.powered_by_gemini')}
       </p>
     </footer>
   )

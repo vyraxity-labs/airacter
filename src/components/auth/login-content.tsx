@@ -76,7 +76,7 @@ const LoginContent = () => {
       {/* Brand identity */}
       <div className='flex flex-col items-center mb-8 space-y-2'>
         <Logo size='large' variant='vertical' href='/' />
-        <p className='text-sm text-on-surface-variant'>{t('subtitle')}</p>
+        <p className='text-sm text-on-surface-variant'>{t('login.subtitle')}</p>
       </div>
 
       {/* Login Form Card using shadcn Card */}
@@ -102,7 +102,7 @@ const LoginContent = () => {
                 htmlFor='email'
                 className='text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider'
               >
-                {t('email_label')}
+                {t('login.email_label')}
               </Label>
               <div className='relative group'>
                 <span className='absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/70 group-focus-within:text-primary transition-colors z-10'>
@@ -127,13 +127,13 @@ const LoginContent = () => {
                   htmlFor='password'
                   className='text-xs font-semibold text-on-surface-variant uppercase tracking-wider'
                 >
-                  {t('password_label')}
+                  {t('login.password_label')}
                 </Label>
                 <Link
                   href='#'
                   className='text-xs font-semibold text-primary hover:underline'
                 >
-                  {t('forgot_link')}
+                  {t('login.forgot_link')}
                 </Link>
               </div>
               <div className='relative group'>
@@ -161,7 +161,9 @@ const LoginContent = () => {
               className='h-12 w-full rounded-2xl font-semibold flex items-center justify-center gap-2 mt-6 cursor-pointer'
             >
               <span>
-                {loading ? t('logging_in_button') : t('login_button')}
+                {loading
+                  ? t('login.logging_in_button')
+                  : t('login.login_button')}
               </span>
               {!loading && <ArrowRight size={16} />}
             </Button>
@@ -173,12 +175,12 @@ const LoginContent = () => {
 
       {/* Footer Link */}
       <p className='text-center mt-6 text-sm text-on-surface-variant'>
-        {t('no_account_label')}
+        {t('login.no_account_label')}
         <Link
           href='/auth/register'
           className='text-primary font-semibold hover:text-primary/80 transition-colors ml-1'
         >
-          {t('register_link')}
+          {t('login.register_link')}
         </Link>
       </p>
     </main>

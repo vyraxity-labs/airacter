@@ -40,7 +40,7 @@ export function DashboardShell({
             size='icon'
             className={cn(
               'fixed z-50 top-0 bg-surface-low rounded-tl-none rounded-bl-none cursor-pointer md:hidden transition-all duration-300',
-              asideIsOpen ? 'left-[280px]' : 'left-0',
+              asideIsOpen ? 'left-70' : 'left-0',
             )}
             onClick={() => setAsideIsOpen(!asideIsOpen)}
           >
@@ -56,7 +56,7 @@ export function DashboardShell({
       <div
         className={cn(
           'grow flex flex-col min-h-screen md:h-screen md:overflow-hidden pb-16 md:pb-0',
-          sidebar ? 'md:pl-[352px]' : 'md:pl-[72px]',
+          sidebar ? 'md:pl-88' : 'md:pl-18',
         )}
       >
         {children}

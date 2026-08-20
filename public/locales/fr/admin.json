@@ -1,0 +1,10 @@
+{
+  "admin_dashboard_title": "Tableau de bord administrateur",
+  "adjust_tokens": "Ajuster les Jetons",
+  "user_email": "E-mail de l'utilisateur",
+  "amount": "Montant (négatif pour débiter)",
+  "reason": "Raison",
+  "submit": "Soumettre l'ajustement",
+  "recent_transactions": "Transactions de jetons récentes",
+  "accrued_creator_earnings": "Gains accumulés du créateur"
+}

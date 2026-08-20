@@ -1,0 +1,86 @@
+{
+  "sidebar": {
+    "conversations": "Conversations",
+    "new_chat": "New",
+    "search": {
+      "search_placeholder": "Search chats..."
+    },
+    "error": {
+      "retry_btn": "Retry"
+    },
+    "group": {
+      "group_today": "Today",
+      "group_yesterday": "Yesterday",
+      "group_last_7_days": "Last 7 Days",
+      "group_older": "Older"
+    },
+    "chat": {
+      "you_prefix": "You: ",
+      "no_messages": "No messages yet",
+      "rename_chat_tooltip": "Rename chat",
+      "delete_chat_tooltip": "Delete chat"
+    },
+    "confirm_delete_chat": "Are you sure you want to delete this chat session? All messages will be lost."
+  },
+  "main": {
+    "header": {
+      "token_warning_title": "Low Token Balance!",
+      "token_balance": "Token Balance"
+    },
+    "warning": {
+      "depleted_warning": "Your token balance is depleted (0 remaining). Chat is paused. Please top up to continue.",
+      "critical_warning": "Critically low token balance ({{count}} remaining). Chat will be paused soon. Please top up.",
+      "low_warning": "Low token balance ({{count}} remaining).",
+      "buy_tokens": "Buy Tokens"
+    },
+    "states": {
+      "synchronizing": "Synchronizing history...",
+      "empty_chat": "This is the start of your chat with {{character}}",
+      "is_formulating": "is formulating...",
+      "empty_conversation": "No Conversation Selected",
+      "empty_conversation_desc": "Select an active character thread from the sidebar panel, or explore our marketplace to spawn a new persistent AI persona session."
+    },
+    "error": {
+      "feedback_failed": "Feedback update failed",
+      "no_user_found": "No user message found to regenerate a response for.",
+      "insufficient_token": "Insufficient token balance. Please purchase more tokens.",
+      "regeneration_failed": "Failed to regenerate response",
+      "stream_unsupported": "ReadableStream not supported"
+    },
+    "message": {
+      "copy_markdown": "Copy Markdown",
+      "copied_markdown": "Copied",
+      "read_aloud": "Read Aloud",
+      "stop_reading": "Stop Reading",
+      "regenerate": "Regenerate Response",
+      "thumbs_up": "Thumbs Up",
+      "thumbs_down": "Thumbs Down"
+    },
+    "input": {
+      "insufficient_tokens": "Insufficient token balance. Please purchase more tokens to continue chatting.",
+      "error_failed_to_dispatch": "Failed to dispatch message.",
+      "stream_unsupported": "ReadableStream not supported",
+      "error_failed_to_generate": "Failed to generate AI response. Try again.",
+      "message_character_placeholder": "Message {{name}}...",
+      "tokens_estimate": "TOKENS ESTIMATE",
+      "powered_by_gemini": "Powered by Google Gemini"
+    }
+  },
+  "error": {
+    "load_failed": "Failed to load message history",
+    "delete_failed": "Failed to delete chat thread",
+    "thread_delete_failed": "Failed to delete this chat thread. Please try again.",
+    "update_failed": "Failed to update chat title",
+    "chat_rename_failed": "Failed to rename chat session. Please try again."
+  },
+  "input_placeholder": "Type a message...",
+  "messages_remaining": "remaining",
+  "chat_actions": "Actions",
+  "regenerate": "Regenerate Response",
+  "stop_generation": "Stop Generation",
+  "auto_titling": "Auto-titling...",
+  "no_chats_found": "No conversations found",
+  "token_warning_desc": "You have less than 1,000 tokens remaining. Some operations might fail.",
+  "active_versions": "Version",
+  "explore_desc": "Explore characters and start talking to one to begin!"
+}

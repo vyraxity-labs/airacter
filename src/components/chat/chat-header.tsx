@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import CharacterAvatar from '../character/character-avatar'
 import { Chat } from '@/models/chat/type'
 import { Sparkles } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n/client'
 
 const ChatHeader = ({
   activeChat,
@@ -10,6 +11,8 @@ const ChatHeader = ({
   activeChat: Chat
   tokenBalance: number
 }) => {
+  const { t } = useTranslation('chat')
+
   return (
     <header className='h-16 border-b border-border/40 bg-surface-lowest/40 backdrop-blur-md px-6 flex items-center justify-between z-10 shrink-0 sticky top-0'>
       <div className='flex items-center gap-3'>
@@ -36,7 +39,11 @@ const ChatHeader = ({
             ? 'bg-error/10 border-error/20 text-error animate-pulse'
             : 'bg-surface-lowest/80 border-border/30 text-on-surface',
         )}
-        title={tokenBalance < 5000 ? 'Low token balance!' : 'Available balance'}
+        title={
+          tokenBalance < 5000
+            ? t('main.header.token_warning_title')
+            : t('main.header.token_balance')
+        }
       >
         <Sparkles
           size={12}
@@ -45,7 +52,10 @@ const ChatHeader = ({
             tokenBalance >= 5000 && 'animate-pulse',
           )}
         />
-        <span>{tokenBalance.toLocaleString()} TOKENS</span>
+        <span>
+          {tokenBalance.toLocaleString()}{' '}
+          {t('main.header.token_balance').toUpperCase()}
+        </span>
       </div>
     </header>
   )

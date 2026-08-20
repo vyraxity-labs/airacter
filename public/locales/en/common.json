@@ -1,4 +1,17 @@
 {
   "app_name": "Airacter",
-  "welcome": "Welcome back"
+  "dashboard_title": "Dashboard",
+  "admin_dashboard": "Admin",
+  "my_characters": "My Characters",
+  "upgrade": "Upgrade",
+  "welcome": "Welcome back",
+  "side_bottom_bar": {
+    "chats": "Chats",
+    "roles": "Roles",
+    "explore": "Explore",
+    "settings": "Settings",
+    "logout": "Logout",
+    "help": "Help & Info",
+    "theme_toggle": "Toggle theme"
+  }
 }

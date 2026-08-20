@@ -2,8 +2,11 @@
 
 import { signIn } from 'next-auth/react'
 import { Button } from '../ui/button'
+import { useTranslation } from '@/lib/i18n/client'
 
 const GoogleOAuthLogin = ({ loading }: { loading: boolean }) => {
+  const { t } = useTranslation('auth')
+
   const handleGoogleSignIn = () => {
     signIn('google', { callbackUrl: '/' })
   }
@@ -17,7 +20,7 @@ const GoogleOAuthLogin = ({ loading }: { loading: boolean }) => {
         </div>
         <div className='relative flex justify-center text-xs uppercase'>
           <span className='bg-surface px-4 text-on-surface-variant/70'>
-            Or continue with
+            {t('oauth.google_oauth_divider')}
           </span>
         </div>
       </div>
@@ -47,7 +50,7 @@ const GoogleOAuthLogin = ({ loading }: { loading: boolean }) => {
             fill='#EA4335'
           />
         </svg>
-        <span>Google Account</span>
+        <span>{t('oauth.google_account_button')}</span>
       </Button>
     </>
   )

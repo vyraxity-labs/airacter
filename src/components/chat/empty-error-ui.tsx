@@ -4,10 +4,12 @@ import { Loader2, MessageSquare } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
+import { useTranslation } from '@/lib/i18n/client'
 
 const EmptyErrorUI = ({ errorMessage }: { errorMessage?: string }) => {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const { t } = useTranslation('chat')
 
   const handleRetry = () => {
     startTransition(() => {
@@ -29,7 +31,7 @@ const EmptyErrorUI = ({ errorMessage }: { errorMessage?: string }) => {
           disabled={isPending}
           className='text-xs mt-2 cursor-pointer'
         >
-          Retry
+          {t('sidebar.error.retry_btn')}
           {isPending && <Loader2 className='animate-spin' size={12} />}
         </Button>
       </div>
@@ -42,10 +44,10 @@ const EmptyErrorUI = ({ errorMessage }: { errorMessage?: string }) => {
         size={32}
       />
       <p className='text-xs font-semibold text-on-surface-variant'>
-        No active conversations
+        {t('no_chats_found')}
       </p>
       <p className='text-[10px] text-outline mt-1 leading-relaxed'>
-        Explore characters and start talking to one to begin!
+        {t('explore_desc')}
       </p>
     </div>
   )
