@@ -9,11 +9,13 @@ import { STARTING_TOKEN } from '@/lib/constants'
 import { DUMMY_PASSWORD_HASH } from './auth.constants'
 import { TransactionType } from '@/generated/prisma/enums'
 import { creditTokens } from '@/lib/tokens'
+import crypto from 'crypto'
+import { encode } from 'next-auth/jwt'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(db),
-  session: { strategy: 'jwt' },
+  session: { strategy: 'database' },
   providers: [
     ...authConfig.providers,
     Credentials({
@@ -81,6 +83,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           err,
         )
       }
+    },
+  },
+  callbacks: {
+    ...authConfig.callbacks,
+    async jwt({ token, user, account }) {
+      if (account?.provider === 'credentials' && user && user.id) {
+        // Generate a random session token
+        const sessionToken = crypto.randomUUID()
+        const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+
+        // Manually write session to database
+        await db.session.create({
+          data: {
+            sessionToken,
+            userId: user.id,
+            expires,
+          },
+        })
+        token.sessionId = sessionToken
+      }
+      return token
+    },
+  },
+  jwt: {
+    async encode(params) {
+      if (params.token?.sessionId) {
+        return params.token.sessionId as string
+      }
+      return encode(params)
     },
   },
 })

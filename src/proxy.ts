@@ -1,16 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import NextAuth from 'next-auth'
-import { authConfig } from './auth.config'
 import { verifyToken } from '@/lib/jwt'
 import { API_AUTH_ROUTES_PREFIX, API_ROUTES_PREFIX } from './auth.constants'
 import { Role } from './generated/prisma/enums'
-import { getRequiredEnv } from './lib/env'
+import { auth as nextAuthMiddleware } from '@/auth'
 
-// Initialize NextAuth instance safe for Edge runtime (no database imports)
-const { auth: nextAuthMiddleware } = NextAuth(authConfig)
-
-export async function proxy(request: NextRequest) {
+export const proxy = nextAuthMiddleware(async (request) => {
   const { pathname } = request.nextUrl
 
   // Prevent header spoofing by stripping custom user context headers from the incoming request
@@ -60,46 +55,12 @@ export async function proxy(request: NextRequest) {
     let userEmail = ''
     let userRole: Role = Role.USER
 
-    const session = await (nextAuthMiddleware as any)(request)
-    if (session && session.auth?.user) {
-      const user = session.auth.user
+    const session = request.auth
+    if (session && session?.user) {
+      const user = session.user
       userId = user.id || ''
       userEmail = user.email || ''
       userRole = (user as any).role || Role.USER
-    }
-
-    // If nextAuthMiddleware didn't yield the user context, try parsing JWT from cookies directly
-    if (!userId) {
-      try {
-        const { getToken } = await import('next-auth/jwt')
-        const cookies = request.cookies
-        const cookieNames = [
-          '__Secure-authjs.session-token',
-          'authjs.session-token',
-          '__Secure-next-auth.session-token',
-          'next-auth.session-token',
-        ]
-        const activeCookieName = cookieNames.find((name) => cookies.has(name))
-
-        const token = activeCookieName
-          ? await getToken({
-              req: request,
-              secret:
-                getRequiredEnv('AUTH_SECRET') ||
-                getRequiredEnv('NEXTAUTH_SECRET'),
-              cookieName: activeCookieName,
-              secureCookie: activeCookieName?.startsWith('__Secure-'),
-            })
-          : null
-
-        if (token) {
-          userId = (token.id as string) || (token.sub as string) || ''
-          userEmail = token.email || ''
-          userRole = (token.role as Role) || Role.USER
-        }
-      } catch (err) {
-        console.error('Failed to extract token via getToken fallback:', err)
-      }
     }
 
     if (userId) {
@@ -124,7 +85,7 @@ export async function proxy(request: NextRequest) {
 
   // 2. Web Page Protection (NextAuth edge validation)
   return (nextAuthMiddleware as any)(request)
-}
+})
 
 export const config = {
   matcher: [
