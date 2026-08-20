@@ -4,6 +4,7 @@ import { ThemeProvider, themeScript } from '@/components/theme-provider'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import { AppProvider } from '@/providers/store'
+import { I18nProvider } from '@/providers/i18n-provider'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -32,7 +33,9 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <AppProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <I18nProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </I18nProvider>
         </AppProvider>
       </body>
     </html>
