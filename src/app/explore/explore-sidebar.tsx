@@ -15,6 +15,7 @@ import {
   Layers 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/client";
 
 const CATEGORIES = [
   { id: "all", label: "All Categories", icon: Layers },
@@ -32,6 +33,7 @@ export function ExploreSidebar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const { t } = useTranslation("explore");
 
   // Local state for search query to prevent keyboard focus loss
   const currentQ = searchParams?.get("q") || "";
@@ -74,7 +76,7 @@ export function ExploreSidebar() {
       <div className="flex flex-col gap-6">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-primary mb-5 font-sans">
-            Explore
+            {t('explore_title')}
           </h1>
           <div className="relative group">
             <Search 
@@ -85,7 +87,7 @@ export function ExploreSidebar() {
               type="text"
               value={searchVal}
               onChange={(e) => setSearchVal(e.target.value)}
-              placeholder="Search personas..."
+              placeholder={t('search_placeholder')}
               className="w-full bg-surface-container border border-border/20 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all placeholder:text-outline text-on-surface"
             />
           </div>
@@ -94,7 +96,7 @@ export function ExploreSidebar() {
         {/* Categories Navigation */}
         <nav className="flex flex-col gap-3">
           <span className="text-[10px] font-bold text-outline uppercase tracking-wider px-2">
-            Categories
+            {t('categories_title')}
           </span>
           <div className="flex flex-col gap-1 overflow-y-auto max-h-[50vh] pr-1 custom-scrollbar">
             {CATEGORIES.map((cat) => {
@@ -112,7 +114,7 @@ export function ExploreSidebar() {
                   )}
                 >
                   <Icon size={16} className={cn(isActive && "text-primary")} />
-                  {cat.label}
+                  {t('cat_' + cat.id, { defaultValue: cat.label })}
                 </button>
               );
             })}
@@ -122,13 +124,13 @@ export function ExploreSidebar() {
 
       {/* Want to contribute Card */}
       <div className="p-4 rounded-2xl glass-panel text-center border border-border/30 mt-auto flex flex-col gap-3">
-        <p className="text-xs text-on-surface-variant">Want to contribute?</p>
+        <p className="text-xs text-on-surface-variant">{t('contribute_label')}</p>
         <button
           onClick={() => router.push("/characters/new")}
           className="w-full py-2.5 btn-gradient font-bold rounded-xl text-sm flex items-center justify-center gap-1.5 cursor-pointer"
         >
           <Plus size={16} />
-          Create Persona
+          {t('create_persona_btn')}
         </button>
       </div>
     </div>

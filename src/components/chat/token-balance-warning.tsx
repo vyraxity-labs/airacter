@@ -1,8 +1,11 @@
 import { cn } from '@/lib/utils'
 import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n/client'
 
 const TokenBalanceWarning = ({ tokenBalance }: { tokenBalance: number }) => {
+  const { t } = useTranslation('chat')
+
   return (
     <div
       className={cn(
@@ -15,14 +18,14 @@ const TokenBalanceWarning = ({ tokenBalance }: { tokenBalance: number }) => {
       <AlertCircle size={14} className='shrink-0' />
       <span>
         {tokenBalance <= 0
-          ? 'Your token balance is depleted (0 remaining). Chat is paused. Please top up to continue.'
+          ? t('main.warning.depleted_warning')
           : tokenBalance < 1000
-            ? 'Critically low token balance (' +
-              tokenBalance.toLocaleString() +
-              ' remaining). Chat will be paused soon. Please top up.'
-            : 'Low token balance (' +
-              tokenBalance.toLocaleString() +
-              ' remaining).'}
+            ? t('main.warning.critical_warning', {
+                count: tokenBalance.toLocaleString(),
+              })
+            : t('main.warning.low_warning', {
+                count: tokenBalance.toLocaleString(),
+              })}
       </span>
       <Link
         href='/upgrade'
@@ -33,7 +36,7 @@ const TokenBalanceWarning = ({ tokenBalance }: { tokenBalance: number }) => {
             : 'text-yellow-600 dark:text-yellow-400',
         )}
       >
-        Buy Tokens
+        {t('main.warning.buy_tokens')}
       </Link>
     </div>
   )

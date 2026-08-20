@@ -26,6 +26,7 @@ import TokenBalanceWarning from './token-balance-warning'
 import { renderMarkdown } from '@/models/chat/helper'
 import MessageCallout from './message-callout'
 import ChatInputForm from './chat-input-form'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface ChatFeedProps {
   activeChat: Chat
@@ -51,6 +52,7 @@ export function ChatFeed({
   const [errorMsg, setErrorMsg] = useState('')
   const [imageError, setImageError] = useState(false)
   const [activeSpeechId, setActiveSpeechId] = useState<string | null>(null)
+  const { t } = useTranslation('chat')
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -119,7 +121,7 @@ export function ChatFeed({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ feedback: newFeedback }),
       })
-      if (!response.ok) throw new Error('Feedback update failed')
+      if (!response.ok) throw new Error(t('main.error.feedback_failed'))
     } catch (err) {
       console.error('Failed to save feedback:', err)
       // Revert optimistic update on failure
@@ -147,7 +149,7 @@ export function ChatFeed({
     }
 
     if (lastUserIndex === -1) {
-      setErrorMsg('No user message found to regenerate a response for.')
+      setErrorMsg(t('main.error.no_user_found'))
       setIsStreaming(false)
       return
     }
@@ -159,12 +161,10 @@ export function ChatFeed({
 
       if (!response.ok) {
         if (response.status === 402) {
-          throw new Error(
-            'Insufficient token balance. Please purchase more tokens.',
-          )
+          throw new Error(t('main.error.insufficient_token'))
         }
         const errData = await response.json()
-        throw new Error(errData.error || 'Failed to regenerate response')
+        throw new Error(errData.error || t('main.error.regeneration_failed'))
       }
 
       // Truncate messages after that user message only after successful response
@@ -173,7 +173,7 @@ export function ChatFeed({
 
       const reader = response.body?.getReader()
       const decoder = new TextDecoder()
-      if (!reader) throw new Error('ReadableStream not supported')
+      if (!reader) throw new Error(t('main.error.stream_unsupported'))
 
       let currentResponseText = ''
       let buffer = ''
@@ -219,7 +219,7 @@ export function ChatFeed({
       }
     } catch (err: any) {
       console.error(err)
-      setErrorMsg(err.message || 'Failed to regenerate response')
+      setErrorMsg(err.message || t('main.error.regeneration_failed'))
     } finally {
       setIsStreaming(false)
       setStreamingMessage('')
@@ -252,14 +252,16 @@ export function ChatFeed({
           <div className='h-full flex items-center justify-center flex-col gap-2'>
             <Loader2 className='text-primary animate-spin' size={24} />
             <span className='text-xs text-outline font-bold'>
-              Synchronizing history...
+              {t('main.states.synchronizing')}
             </span>
           </div>
         ) : messages.length === 0 ? (
           <div className='h-full flex items-center justify-center flex-col gap-3 text-center max-w-md mx-auto select-none'>
             <CharacterAvatar char={activeChat.character} />
             <h3 className='font-bold text-on-surface text-sm mt-2'>
-              This is the start of your chat with {activeChat.character.name}
+              {t('main.states.empty_chat', {
+                character: activeChat.character.name,
+              })}
             </h3>
             <p className='text-xs text-outline leading-relaxed'>
               {activeChat.character.description}
@@ -308,7 +310,9 @@ export function ChatFeed({
                   <div className='w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]'></div>
                   <div className='w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]'></div>
                 </div>
-                <span>{activeChat.character.name} is formulating...</span>
+                <span>
+                  {activeChat.character.name} {t('main.states.is_formulating')}
+                </span>
               </div>
             </div>
           </div>

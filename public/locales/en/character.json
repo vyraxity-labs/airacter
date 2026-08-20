@@ -1,0 +1,51 @@
+{
+  "sidebar": {
+    "create_character": "Create Character",
+    "my_characters": "My Characters",
+    "empty_character": "No Created personas Yet"
+  },
+  "tabs_header": {
+    "all": "All",
+    "created": "Created",
+    "saved_library": "Saved Library",
+    "search": "Search Characters..."
+  },
+  "main": {
+    "all_tabs": {
+      "new_release": "New Release",
+      "title": "Forge your soul's digital echo.",
+      "description": "Our new Character Engine v2 allows for deeper emotional resonance, sarcastic wit, and persistent memory across all your devices.",
+      "start_creating": "Start Creating",
+      "bg_alt": "Engine promo decoration"
+    },
+    "empty_filter": {
+      "head": "Character Library",
+      "create": "Create New persona",
+      "create_desc": "Build a custom personality with prompt instructions, name, description and tone variables.",
+      "no_match": "No characters match the filter",
+      "no_match_desc": "Try clearing your search query or check the explore tab to bookmark public personas.",
+      "go": "Go to Explore"
+    },
+    "character_list": {
+      "create": "Create New Persona",
+      "create_desc": "Click here to forge a new AI persona from scratch."
+    }
+  },
+  "hub_title": "Character Hub",
+  "create_character": "Create Character",
+  "edit_character": "Edit Character",
+  "character_name": "Character Name",
+  "character_role": "Role / Description",
+  "system_prompt": "System Prompt / Instructions",
+  "language": "Language",
+  "voice": "Voice",
+  "avatar": "Avatar Image",
+  "save": "Save",
+  "cancel": "Cancel",
+  "creator": "Creator",
+  "public": "Public",
+  "private": "Private",
+  "library_search_placeholder": "Search characters...",
+  "no_characters_found": "No characters found",
+  "delete_character_confirm": "Are you sure you want to delete this character?"
+}

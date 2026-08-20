@@ -1,7 +1,12 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n/client'
 import { Compass, Plus } from 'lucide-react'
 import Link from 'next/link'
 
 const EmptyCharacterFilter = () => {
+  const { t } = useTranslation('character')
+
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
       {/* Create Character trigger block card */}
@@ -13,11 +18,10 @@ const EmptyCharacterFilter = () => {
           <Plus className='text-primary' size={24} />
         </div>
         <span className='font-bold text-sm text-on-surface-variant group-hover:text-primary'>
-          Create New Persona
+          {t('main.empty_filter.create')}
         </span>
         <p className='text-xs text-outline max-w-xs mt-1'>
-          Build a custom personality with prompt instructions, name, description
-          and tone variables.
+          {t('main.empty_filter.create_desc')}
         </p>
       </Link>
 
@@ -27,17 +31,16 @@ const EmptyCharacterFilter = () => {
           className='text-outline stroke-[1.5px] animate-pulse'
         />
         <span className='font-bold text-sm text-on-surface-variant'>
-          No characters match the filter
+          {t('main.empty_filter.no_match')}
         </span>
         <p className='text-xs text-outline max-w-xs mt-1'>
-          Try clearing your search query or check the explore tab to bookmark
-          public personas.
+          {t('main.empty_filter.no_match_desc')}
         </p>
         <Link
           href='/explore'
           className='mt-2 text-xs font-semibold px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-xl hover:bg-primary/20'
         >
-          Go to Explore
+          {t('main.empty_filter.go')}
         </Link>
       </div>
     </div>

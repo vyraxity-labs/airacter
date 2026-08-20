@@ -4,6 +4,7 @@ import Link from 'next/link'
 import ChatSidebarAvatar from './chat-sidebar-avatar'
 import { FormEvent, MouseEvent, useState } from 'react'
 import { Check, Edit2, Trash2, X } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface SingleChatProps {
   chat: Chat
@@ -18,6 +19,7 @@ const SingleChat = ({
   onDeleteChat,
   onRenameChat,
 }: SingleChatProps) => {
+  const { t } = useTranslation('chat')
   const [editingChatId, setEditingChatId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
   const [isSubmittingRename, setIsSubmittingRename] = useState(false)
@@ -66,11 +68,7 @@ const SingleChat = ({
     e.preventDefault()
     e.stopPropagation()
 
-    if (
-      confirm(
-        'Are you sure you want to delete this chat session? All messages will be lost.',
-      )
-    ) {
+    if (confirm(t('sidebar.confirm_delete_chat'))) {
       try {
         await onDeleteChat(chatId)
       } catch (err) {
@@ -131,9 +129,10 @@ const SingleChat = ({
             </h4>
             <p className='text-[10px] text-outline truncate leading-normal mt-0.5'>
               {lastMessage
-                ? (lastMessage.role === 'user' ? 'You: ' : '') +
-                  lastMessage.content
-                : 'No messages yet'}
+                ? (lastMessage.role === 'user'
+                    ? t('sidebar.chat.you_prefix')
+                    : '') + lastMessage.content
+                : t('sidebar.chat.no_messages')}
             </p>
           </>
         )}
@@ -145,14 +144,14 @@ const SingleChat = ({
           <button
             onClick={(e) => handleStartRename(e, chat)}
             className='p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container-high transition-all cursor-pointer'
-            title='Rename chat'
+            title={t('sidebar.chat.rename_chat_tooltip')}
           >
             <Edit2 size={12} />
           </button>
           <button
             onClick={(e) => handleDeleteClick(e, chat.id)}
             className='p-1 rounded text-outline hover:text-error hover:bg-error/15 transition-all cursor-pointer'
-            title='Delete chat'
+            title={t('sidebar.chat.delete_chat_tooltip')}
           >
             <Trash2 size={12} />
           </button>

@@ -10,6 +10,7 @@ import EmptyCharacterFilter from '@/components/roles/empty-character-filter'
 import { getCharactersByTabs } from '@/models/character/query'
 import { TrendingCharacter } from '@/models/character/types'
 import CharacterList from './character-list'
+import CharacterLibraryHead from '@/components/roles/character_library-head'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,11 +65,7 @@ export default async function MyCharactersPage({
 
           {/* Grid Section */}
           <section>
-            <div className='flex items-center justify-between mb-6'>
-              <h3 className='text-xl font-bold text-on-background select-none'>
-                Character Library
-              </h3>
-            </div>
+            <CharacterLibraryHead />
 
             {characters.length === 0 ? (
               <EmptyCharacterFilter />

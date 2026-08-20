@@ -1,0 +1,15 @@
+{
+  "app_name": "Airacter",
+  "dashboard_title": "Tableau de bord",
+  "admin_dashboard": "Admin",
+  "settings": "Paramètres",
+  "logout": "Se déconnecter",
+  "explore": "Explorer",
+  "my_characters": "Mes Personnages",
+  "upgrade": "Améliorer",
+  "theme_toggle": "Basculer le thème",
+  "welcome": "Bon retour",
+  "chats": "Discussions",
+  "roles": "Rôles",
+  "help": "Aide & Info"
+}

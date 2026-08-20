@@ -11,10 +11,12 @@ import Link from 'next/link'
 import { Button } from '../ui/button'
 import GoogleOAuthLogin from './google-oauth-login'
 import Logo from '../general/logo'
+import { useTranslation } from '@/lib/i18n/client'
 
 const LoginContent = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useTranslation('auth')
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -25,18 +27,18 @@ const LoginContent = () => {
   useEffect(() => {
     // Show verified success message if redirected from verify page
     if (searchParams.get('verified') === 'true') {
-      setSuccessMsg('Email verified successfully! You can now log in.')
+      setSuccessMsg(t('email_verified_success'))
     }
     // Show error if redirected from next-auth error callbacks
     const oauthError = searchParams.get('error')
     if (oauthError) {
       setError(
         oauthError === 'OAuthSignin' || oauthError === 'OAuthCallback'
-          ? 'Failed to sign in with Google. Please try again.'
-          : 'An authentication error occurred.',
+          ? t('error_google_oauth')
+          : t('error_auth_generic'),
       )
     }
-  }, [searchParams])
+  }, [searchParams, t])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,7 +55,7 @@ const LoginContent = () => {
 
       if (result?.error) {
         if (result.error === 'CredentialsSignin') {
-          setError('Invalid email or password.')
+          setError(t('error_invalid_credentials'))
         } else {
           setError(result.error)
         }
@@ -63,20 +65,18 @@ const LoginContent = () => {
       }
     } catch (err: any) {
       console.error('An unexpected error occurred during login:', err)
-      setError('An unexpected error occurred during login.')
+      setError(t('error_unexpected'))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <main className='w-full max-w-[420px] z-10 py-8'>
+    <main className='w-full max-w-105 z-10 py-8'>
       {/* Brand identity */}
       <div className='flex flex-col items-center mb-8 space-y-2'>
         <Logo size='large' variant='vertical' href='/' />
-        <p className='text-sm text-on-surface-variant'>
-          Step into your digital imagination
-        </p>
+        <p className='text-sm text-on-surface-variant'>{t('login.subtitle')}</p>
       </div>
 
       {/* Login Form Card using shadcn Card */}
@@ -102,7 +102,7 @@ const LoginContent = () => {
                 htmlFor='email'
                 className='text-xs font-semibold text-on-surface-variant ml-2 uppercase tracking-wider'
               >
-                Email Address
+                {t('login.email_label')}
               </Label>
               <div className='relative group'>
                 <span className='absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/70 group-focus-within:text-primary transition-colors z-10'>
@@ -127,13 +127,13 @@ const LoginContent = () => {
                   htmlFor='password'
                   className='text-xs font-semibold text-on-surface-variant uppercase tracking-wider'
                 >
-                  Password
+                  {t('login.password_label')}
                 </Label>
                 <Link
                   href='#'
                   className='text-xs font-semibold text-primary hover:underline'
                 >
-                  Forgot?
+                  {t('login.forgot_link')}
                 </Link>
               </div>
               <div className='relative group'>
@@ -160,7 +160,11 @@ const LoginContent = () => {
               variant='gradient'
               className='h-12 w-full rounded-2xl font-semibold flex items-center justify-center gap-2 mt-6 cursor-pointer'
             >
-              <span>{loading ? 'Logging in...' : 'Login'}</span>
+              <span>
+                {loading
+                  ? t('login.logging_in_button')
+                  : t('login.login_button')}
+              </span>
               {!loading && <ArrowRight size={16} />}
             </Button>
           </form>
@@ -171,12 +175,12 @@ const LoginContent = () => {
 
       {/* Footer Link */}
       <p className='text-center mt-6 text-sm text-on-surface-variant'>
-        Don't have an account?
+        {t('login.no_account_label')}
         <Link
           href='/auth/register'
           className='text-primary font-semibold hover:text-primary/80 transition-colors ml-1'
         >
-          Register for free
+          {t('login.register_link')}
         </Link>
       </p>
     </main>

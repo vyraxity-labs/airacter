@@ -1,0 +1,10 @@
+{
+  "admin_dashboard_title": "Admin Dashboard",
+  "adjust_tokens": "Adjust Tokens",
+  "user_email": "User Email",
+  "amount": "Amount (negative to debit)",
+  "reason": "Reason",
+  "submit": "Submit Adjustment",
+  "recent_transactions": "Recent Token Transactions",
+  "accrued_creator_earnings": "Accrued Creator Earnings"
+}

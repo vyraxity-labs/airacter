@@ -6,6 +6,7 @@ import { Loader2, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import useMediaQuery from '@/hooks/use-media-query'
 import { breakpoints } from '@/lib/break-points'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface LibrarySearchProps {
   searchIsExpanded: boolean
@@ -21,6 +22,7 @@ export function LibrarySearch({
   const [isPending, startTransition] = useTransition()
   const inputRef = useRef<HTMLInputElement>(null)
   const lg = useMediaQuery(breakpoints.lg)
+  const { t } = useTranslation('character')
 
   const currentQ = searchParams?.get('q') || ''
   const [searchVal, setSearchVal] = useState(currentQ)
@@ -60,7 +62,7 @@ export function LibrarySearch({
         type='text'
         value={searchVal}
         onChange={(e) => setSearchVal(e.target.value)}
-        placeholder='Search characters...'
+        placeholder={t('tabs_header.search')}
         className={cn(
           'bg-surface-container border border-border/10 rounded-full pl-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all text-on-surface placeholder:text-outline',
           searchIsExpanded ? 'w-64 pr-4' : 'w-0 pr-1 lg:w-64 lg:pr-4',

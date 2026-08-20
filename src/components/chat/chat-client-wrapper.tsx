@@ -8,6 +8,7 @@ import { ChatFeed } from './chat-feed'
 import { MessageSquare } from 'lucide-react'
 import { Chat } from '@/models/chat/type'
 import { Message } from '@/models/message/type'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface ChatClientWrapperProps {
   user: {
@@ -35,6 +36,7 @@ export function ChatClientWrapper({
   const [tokenBalance, setTokenBalance] = useState(initialTokenBalance)
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoadingMessages, setIsLoadingMessages] = useState(false)
+  const { t } = useTranslation('chat')
 
   const activeChat = chats.find((c) => c.id === activeChatId)
 
@@ -53,7 +55,7 @@ export function ChatClientWrapper({
     setIsLoadingMessages(true)
     fetch(`/api/chats/${activeChatId}/messages`)
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to load message history')
+        if (!res.ok) throw new Error(t('error.load_failed'))
         return res.json()
       })
       .then((data) => {
@@ -77,7 +79,7 @@ export function ChatClientWrapper({
       })
 
       if (!response.ok) {
-        throw new Error('Failed to delete chat thread')
+        throw new Error(t('error.delete_failed'))
       }
 
       router.refresh()
@@ -86,7 +88,7 @@ export function ChatClientWrapper({
       }
     } catch (err) {
       console.error('Delete chat error:', err)
-      alert('Failed to delete this chat thread. Please try again.')
+      alert(t('error.thread_delete_failed'))
     }
   }
 
@@ -100,13 +102,13 @@ export function ChatClientWrapper({
       })
 
       if (!response.ok) {
-        throw new Error('Failed to update chat title')
+        throw new Error(t('error.update_failed'))
       }
 
       router.refresh()
     } catch (err) {
       console.error('Rename chat error:', err)
-      alert('Failed to rename chat session. Please try again.')
+      alert(t('error.chat_rename_failed'))
     }
   }
 
@@ -143,12 +145,10 @@ export function ChatClientWrapper({
               <MessageSquare size={26} />
             </div>
             <h3 className='text-lg font-bold text-on-surface'>
-              No Conversation Selected
+              {t('main.states.empty_conversation')}
             </h3>
             <p className='text-xs text-outline leading-relaxed'>
-              Select an active character thread from the sidebar panel, or
-              explore our marketplace to spawn a new persistent AI persona
-              session.
+              {t('main.states.empty_conversation_desc')}
             </p>
           </div>
         </div>

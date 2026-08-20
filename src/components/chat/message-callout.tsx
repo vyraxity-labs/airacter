@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { renderMarkdown } from '@/models/chat/helper'
 import { useRef, useState } from 'react'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface MessageCalloutProps {
   msg: Message
@@ -40,6 +41,7 @@ const MessageCallout = ({
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null)
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
   const isUser = msg.role === 'user'
+  const { t } = useTranslation('chat')
 
   const handleCopyMarkdown = (msgId: string, content: string) => {
     if (typeof navigator === 'undefined' || !navigator.clipboard) return
@@ -112,7 +114,11 @@ const MessageCallout = ({
             <button
               onClick={() => handleCopyMarkdown(msg.id, msg.content)}
               className='hover:text-primary transition-colors duration-150'
-              title={copiedMessageId === msg.id ? 'Copied!' : 'Copy Markdown'}
+              title={
+                copiedMessageId === msg.id
+                  ? t('main.message.copied_markdown')
+                  : t('main.message.copy_markdown')
+              }
             >
               {copiedMessageId === msg.id ? (
                 <Check size={13} className='text-emerald-500' />
@@ -126,7 +132,11 @@ const MessageCallout = ({
                 'hover:text-primary transition-colors duration-150',
                 activeSpeechId === msg.id ? 'text-primary animate-pulse' : '',
               )}
-              title={activeSpeechId === msg.id ? 'Stop Reading' : 'Read Aloud'}
+              title={
+                activeSpeechId === msg.id
+                  ? t('main.message.stop_reading')
+                  : t('main.message.read_aloud')
+              }
             >
               {activeSpeechId === msg.id ? (
                 <Square size={13} className='fill-current' />
@@ -139,7 +149,7 @@ const MessageCallout = ({
                 onClick={handleRegenerate}
                 disabled={isStreaming}
                 className='hover:text-primary transition-colors duration-150 disabled:opacity-50'
-                title='Regenerate Response'
+                title={t('main.message.regenerate')}
               >
                 <RefreshCw
                   size={13}
@@ -153,7 +163,7 @@ const MessageCallout = ({
                 'hover:text-emerald-500 transition-colors duration-150',
                 msg.feedback === 'up' ? 'text-emerald-500' : '',
               )}
-              title='Thumbs Up'
+              title={t('main.message.thumbs_up')}
             >
               <ThumbsUp
                 size={13}
@@ -166,7 +176,7 @@ const MessageCallout = ({
                 'hover:text-rose-500 transition-colors duration-150',
                 msg.feedback === 'down' ? 'text-rose-500' : '',
               )}
-              title='Thumbs Down'
+              title={t('main.message.thumbs_down')}
             >
               <ThumbsDown
                 size={13}

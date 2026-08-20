@@ -10,9 +10,11 @@ import ThemeUI from './theme-ui'
 import UserAvatar from '../general/user-avatar'
 import Logout from './logout'
 import Logo from '../general/logo'
+import { useTranslation } from '@/lib/i18n/client'
 
 const DesktopSidebar = ({ user }: { user?: User }) => {
   const pathname = usePathname() || ''
+  const { t } = useTranslation('common')
 
   const navItems = getNavItems(pathname)
 
@@ -27,6 +29,7 @@ const DesktopSidebar = ({ user }: { user?: User }) => {
       <div className='flex flex-col gap-4 grow items-center'>
         {navItems.map((item) => {
           const Icon = item.icon
+          const translatedLabel = t(item.label.toLowerCase() as any, { defaultValue: item.label })
           return (
             <Link
               key={item.href}
@@ -37,13 +40,13 @@ const DesktopSidebar = ({ user }: { user?: User }) => {
                   ? 'text-primary bg-primary-container/20 active-glow shadow-glow-primary border border-primary/20'
                   : 'text-on-surface-variant hover:text-on-surface',
               )}
-              title={item.label}
+              title={translatedLabel}
             >
               <Icon size={20} className={cn(item.active && 'stroke-[2.5px]')} />
 
               {/* Floating Tooltip */}
               <span className='absolute left-[76px] px-2.5 py-1.5 rounded-lg bg-surface-highest text-on-surface text-xs font-medium opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 shadow-md whitespace-nowrap z-50 border border-border'>
-                {item.label}
+                {translatedLabel}
               </span>
             </Link>
           )
@@ -56,7 +59,7 @@ const DesktopSidebar = ({ user }: { user?: User }) => {
         <Link
           href='/help'
           className='text-on-surface-variant hover:text-on-surface p-2.5 hover:bg-surface-container rounded-xl transition-colors scale-95 active:scale-90'
-          title='Help & Info'
+          title={t('help')}
         >
           <HelpCircle size={20} />
         </Link>

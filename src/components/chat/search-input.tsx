@@ -1,4 +1,5 @@
 import { Loader2, Search } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n/client'
 
 const SearchInput = ({
   searchQuery,
@@ -9,6 +10,8 @@ const SearchInput = ({
   setSearchQuery: (query: string) => void
   isSearching: boolean
 }) => {
+  const { t } = useTranslation('chat')
+
   return (
     <div className='relative group'>
       {isSearching ? (
@@ -26,7 +29,7 @@ const SearchInput = ({
         type='text'
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder='Search chats...'
+        placeholder={t('sidebar.search.search_placeholder')}
         className='w-full bg-surface-container/80 border border-border/20 rounded-xl pl-9 pr-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/40 text-on-surface placeholder:text-outline transition-all'
       />
     </div>

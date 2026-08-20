@@ -1,6 +1,7 @@
 'use client'
 
 import { LibrarySearch } from '@/app/characters/my/library-search'
+import { useTranslation } from '@/lib/i18n/client'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -12,6 +13,7 @@ interface RolesHeaderProps {
 
 const RolesHeader = ({ q, tab }: RolesHeaderProps) => {
   const [searchIsExpanded, setSearchIsExpanded] = useState(false)
+  const { t } = useTranslation('character')
 
   return (
     <header
@@ -32,7 +34,7 @@ const RolesHeader = ({ q, tab }: RolesHeaderProps) => {
                   : 'text-on-surface-variant border-transparent',
               )}
             >
-              All
+              {t('tabs_header.all')}
             </Link>
             <Link
               href={`/characters/my?tab=created${q ? `&q=${encodeURIComponent(q)}` : ''}`}
@@ -43,7 +45,7 @@ const RolesHeader = ({ q, tab }: RolesHeaderProps) => {
                   : 'text-on-surface-variant border-transparent',
               )}
             >
-              Created
+              {t('tabs_header.created')}
             </Link>
             <Link
               href={`/characters/my?tab=saved${q ? `&q=${encodeURIComponent(q)}` : ''}`}
@@ -54,7 +56,7 @@ const RolesHeader = ({ q, tab }: RolesHeaderProps) => {
                   : 'text-on-surface-variant border-transparent',
               )}
             >
-              Saved Library
+              {t('tabs_header.saved_library')}
             </Link>
           </nav>
         </div>
