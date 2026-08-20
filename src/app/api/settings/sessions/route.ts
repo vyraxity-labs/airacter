@@ -65,34 +65,7 @@ export async function GET(request: Request) {
       }
     }
 
-    // 4. Seed mock sessions if the DB is completely empty, so the user can test revocation
-    if (dbSessions.length === 0) {
-      // Create a mock macOS session
-      const mockMacToken = `session::Chrome on macOS::198.51.100.42::mock_mac_${userId}`
-      // Create a mock iOS session
-      const mockIosToken = `session::Safari on iOS::203.0.113.88::mock_ios_${userId}`
 
-      await db.session.createMany({
-        data: [
-          {
-            userId,
-            sessionToken: mockMacToken,
-            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-          },
-          {
-            userId,
-            sessionToken: mockIosToken,
-            expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
-          },
-        ],
-      })
-
-      // Refetch
-      dbSessions = await db.session.findMany({
-        where: { userId },
-        orderBy: { expires: 'desc' },
-      })
-    }
 
     // 5. Format session objects
     const sessions = dbSessions.map((session) => {
