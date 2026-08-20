@@ -5,7 +5,7 @@ import { API_AUTH_ROUTES_PREFIX, API_ROUTES_PREFIX } from './auth.constants'
 import { Role } from './generated/prisma/enums'
 import { auth as nextAuthMiddleware } from '@/auth'
 
-export async function proxy(request: NextRequest) {
+export const proxy = nextAuthMiddleware(async (request) => {
   const { pathname } = request.nextUrl
 
   // Prevent header spoofing by stripping custom user context headers from the incoming request
@@ -55,15 +55,13 @@ export async function proxy(request: NextRequest) {
     let userEmail = ''
     let userRole: Role = Role.USER
 
-    const session = await (nextAuthMiddleware as any)(request)
-    if (session && session.auth?.user) {
-      const user = session.auth.user
+    const session = request.auth
+    if (session && session?.user) {
+      const user = session.user
       userId = user.id || ''
       userEmail = user.email || ''
       userRole = (user as any).role || Role.USER
     }
-
-
 
     if (userId) {
       requestHeaders.set('x-user-id', userId)
@@ -87,7 +85,7 @@ export async function proxy(request: NextRequest) {
 
   // 2. Web Page Protection (NextAuth edge validation)
   return (nextAuthMiddleware as any)(request)
-}
+})
 
 export const config = {
   matcher: [

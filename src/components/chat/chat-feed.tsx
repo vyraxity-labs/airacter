@@ -269,6 +269,7 @@ export function ChatFeed({
           messages.map((msg) => {
             return (
               <MessageCallout
+                key={msg.id}
                 msg={msg}
                 activeChat={activeChat}
                 lastAssistantMessageId={lastAssistantMessageId}
