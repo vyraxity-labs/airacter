@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import NextAuth from 'next-auth'
-import { authConfig } from './auth.config'
 import { verifyToken } from '@/lib/jwt'
 import { API_AUTH_ROUTES_PREFIX, API_ROUTES_PREFIX } from './auth.constants'
 import { Role } from './generated/prisma/enums'
-import { getRequiredEnv } from './lib/env'
-
-// Initialize NextAuth instance safe for Edge runtime (no database imports)
-const { auth: nextAuthMiddleware } = NextAuth(authConfig)
+import { auth as nextAuthMiddleware } from '@/auth'
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -68,39 +63,7 @@ export async function proxy(request: NextRequest) {
       userRole = (user as any).role || Role.USER
     }
 
-    // If nextAuthMiddleware didn't yield the user context, try parsing JWT from cookies directly
-    if (!userId) {
-      try {
-        const { getToken } = await import('next-auth/jwt')
-        const cookies = request.cookies
-        const cookieNames = [
-          '__Secure-authjs.session-token',
-          'authjs.session-token',
-          '__Secure-next-auth.session-token',
-          'next-auth.session-token',
-        ]
-        const activeCookieName = cookieNames.find((name) => cookies.has(name))
 
-        const token = activeCookieName
-          ? await getToken({
-              req: request,
-              secret:
-                getRequiredEnv('AUTH_SECRET') ||
-                getRequiredEnv('NEXTAUTH_SECRET'),
-              cookieName: activeCookieName,
-              secureCookie: activeCookieName?.startsWith('__Secure-'),
-            })
-          : null
-
-        if (token) {
-          userId = (token.id as string) || (token.sub as string) || ''
-          userEmail = token.email || ''
-          userRole = (token.role as Role) || Role.USER
-        }
-      } catch (err) {
-        console.error('Failed to extract token via getToken fallback:', err)
-      }
-    }
 
     if (userId) {
       requestHeaders.set('x-user-id', userId)
