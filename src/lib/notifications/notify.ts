@@ -97,8 +97,27 @@ export async function notify(options: NotifyOptions): Promise<NotifyResult> {
           text: template?.text,
         })
         deliveredChannels.push(channel)
+      } else if (channel === NotificationChannel.in_app) {
+        if (!userId) {
+          console.warn(`[notify] Cannot create in_app notification for event "${eventType}": no userId provided.`)
+          skippedChannels.push(channel)
+          continue
+        }
+
+        const title = template?.subject || variables.title || `Notification: ${eventType}`
+        const body = template?.text || template?.html || variables.body || variables.message || eventType
+
+        await db.notification.create({
+          data: {
+            userId,
+            eventType,
+            title,
+            body,
+          },
+        })
+        deliveredChannels.push(channel)
       } else {
-        // SMS, Push, In-App channels (will be extended in Step 0.13)
+        // SMS, Push channels (future extensions)
         console.log(`[notify] Channel ${channel} queued for event ${eventType}`)
         deliveredChannels.push(channel)
       }

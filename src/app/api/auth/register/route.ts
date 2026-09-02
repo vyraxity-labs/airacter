@@ -43,8 +43,8 @@ export async function POST(request: Request) {
     const token = crypto.randomUUID();
     const expires = new Date(Date.now() + 3600000); // 1 hour expiry
 
-    await db.$transaction(async (tx) => {
-      await tx.user.create({
+    const newUser = await db.$transaction(async (tx) => {
+      const user = await tx.user.create({
         data: {
           name,
           email,
@@ -59,10 +59,12 @@ export async function POST(request: Request) {
           expires,
         },
       });
+
+      return user;
     });
 
-    // Send verification email via SMTP/Brevo
-    await sendVerificationEmail(email, token);
+    // Send verification email via SMTP/Brevo and record in-app notification
+    await sendVerificationEmail(email, token, newUser.id);
 
     return NextResponse.json(
       { message: "Registration successful. Please check your email to verify your account." },
