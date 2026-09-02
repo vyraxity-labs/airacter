@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { Key, Copy, Check, Loader2, RefreshCw, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/client";
 
 export function ApiKeysClient() {
+  const { t } = useTranslation("settings");
   const [token, setToken] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -26,14 +28,14 @@ export function ApiKeysClient() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to generate pairing token");
+        throw new Error(data.error || t("api_keys.errors.generate_failed"));
       }
 
       setToken(data.key);
       setExpiresAt(data.expiresAt);
       setShowKey(true);
     } catch (err: any) {
-      setErrorMsg(err.message || "An error occurred generating the key.");
+      setErrorMsg(err.message || t("api_keys.errors.generate_generic"));
     } finally {
       setIsPending(false);
     }
@@ -53,7 +55,7 @@ export function ApiKeysClient() {
         <div className="flex items-center gap-6">
           <h2 className="text-sm font-bold text-primary flex items-center gap-2">
             <Key size={16} />
-            Mobile Pairing & API Keys
+            {t("api_keys.header_title")}
           </h2>
         </div>
       </header>
@@ -64,10 +66,11 @@ export function ApiKeysClient() {
         {/* Key Generator Card */}
         <section className="glass-panel rounded-3xl p-8 space-y-6">
           <div>
-            <h3 className="text-base font-bold text-on-surface">Generate Pairing Token</h3>
+            <h3 className="text-base font-bold text-on-surface">
+              {t("api_keys.card_title")}
+            </h3>
             <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
-              Use this JWT token to pair your account with the Airacter mobile application.
-              This token is valid for 30 days and grants access to your character workspace and token balance.
+              {t("api_keys.card_desc")}
             </p>
           </div>
 
@@ -82,13 +85,15 @@ export function ApiKeysClient() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center px-1">
                   <span className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">
-                    Your Pairing Token (Expires in 30 days)
+                    {t("api_keys.token_label")}
                   </span>
                   <span className="text-[10px] text-on-surface-variant/80">
-                    Expires on: {new Date(expiresAt).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
+                    {t("api_keys.expires_on", {
+                      date: new Date(expiresAt).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      }),
                     })}
                   </span>
                 </div>
@@ -102,7 +107,7 @@ export function ApiKeysClient() {
                     <button
                       onClick={() => setShowKey(!showKey)}
                       className="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all cursor-pointer"
-                      title={showKey ? "Hide key" : "Show key"}
+                      title={showKey ? t("api_keys.hide_key_tooltip") : t("api_keys.show_key_tooltip")}
                     >
                       {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -115,7 +120,7 @@ export function ApiKeysClient() {
                           ? "bg-primary/10 text-primary border border-primary/20" 
                           : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
                       )}
-                      title="Copy to clipboard"
+                      title={t("api_keys.copy_tooltip")}
                     >
                       {copied ? <Check size={16} /> : <Copy size={16} />}
                     </button>
@@ -125,7 +130,7 @@ export function ApiKeysClient() {
 
               <div className="flex justify-between items-center pt-2">
                 <p className="text-[10px] text-on-surface-variant/70 italic">
-                  Make sure to copy your token now. It will not be shown again.
+                  {t("api_keys.copy_notice")}
                 </p>
 
                 <button
@@ -134,7 +139,7 @@ export function ApiKeysClient() {
                   className="px-4 py-2 rounded-xl border border-primary/30 text-primary hover:bg-primary/10 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <RefreshCw size={12} className={cn(isPending && "animate-spin")} />
-                  Regenerate Token
+                  {t("api_keys.regenerate_btn")}
                 </button>
               </div>
             </div>
@@ -142,7 +147,7 @@ export function ApiKeysClient() {
             <div className="py-6 flex flex-col items-center justify-center border border-dashed border-border/40 rounded-2xl bg-surface-container/5">
               <Key className="text-primary/30 mb-3" size={32} />
               <p className="text-xs text-on-surface-variant font-medium mb-4 text-center max-w-sm">
-                No active session pairing token generated. Click the button below to sign a 30-day token.
+                {t("api_keys.empty_desc")}
               </p>
               <button
                 onClick={handleGenerateKey}
@@ -154,7 +159,7 @@ export function ApiKeysClient() {
                 ) : (
                   <Key size={14} />
                 )}
-                Generate Pairing Token
+                {t("api_keys.generate_btn")}
               </button>
             </div>
           )}
@@ -164,11 +169,11 @@ export function ApiKeysClient() {
         <section className="p-6 rounded-3xl bg-error/5 border border-error/20 flex gap-4">
           <AlertTriangle className="text-error shrink-0 mt-0.5" size={20} />
           <div>
-            <h4 className="text-xs font-bold text-error">Security Advisory</h4>
+            <h4 className="text-xs font-bold text-error">
+              {t("api_keys.advisory_title")}
+            </h4>
             <p className="text-[11px] text-on-surface-variant leading-relaxed mt-1">
-              Your pairing token grants full, unrestricted access to your Airacter account. 
-              Never paste this key into untrusted applications, emails, or public repositories. 
-              Airacter staff will never ask for your pairing key or secret tokens.
+              {t("api_keys.advisory_desc")}
             </p>
           </div>
         </section>

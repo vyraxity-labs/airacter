@@ -1,5 +1,8 @@
+'use client'
+
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface TrendingPaginationProps {
   page: number
@@ -16,6 +19,8 @@ const TrendingPagination = ({
   totalPages,
   q,
 }: TrendingPaginationProps) => {
+  const { t } = useTranslation('character')
+
   return (
     <div className='flex items-center justify-center gap-6 mt-12 pt-6 border-t border-border/10'>
       {page > 1 ? (
@@ -24,12 +29,12 @@ const TrendingPagination = ({
           className='flex items-center gap-1 text-sm font-semibold text-primary hover:underline'
         >
           <ChevronLeft size={16} />
-          Previous
+          {t('main.explore.pagination.previous')}
         </Link>
       ) : (
         <span className='flex items-center gap-1 text-sm font-semibold text-outline cursor-not-allowed'>
           <ChevronLeft size={16} />
-          Previous
+          {t('main.explore.pagination.previous')}
         </span>
       )}
 
@@ -82,12 +87,12 @@ const TrendingPagination = ({
           href={`/explore?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}&sort=${encodeURIComponent(sort)}&page=${page + 1}`}
           className='flex items-center gap-1 text-sm font-semibold text-primary hover:underline'
         >
-          Next
+          {t('main.explore.pagination.next')}
           <ChevronRight size={16} />
         </Link>
       ) : (
         <span className='flex items-center gap-1 text-sm font-semibold text-outline cursor-not-allowed'>
-          Next
+          {t('main.explore.pagination.next')}
           <ChevronRight size={16} />
         </span>
       )}

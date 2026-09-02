@@ -1,10 +1,105 @@
 {
-  "upgrade_title": "Améliorez votre compte",
-  "upgrade_subtitle": "Obtenez plus de jetons, débloquez les fonctionnalités pro et discutez avec des personnages avancés.",
-  "lite_plan": "Lite",
-  "standard_plan": "Standard",
-  "pro_plan": "Pro",
-  "subscribe": "S'abonner",
-  "checkout_title": "Paiement de la facture",
-  "payout_notice": "Paiement réussi ! Vos jetons ont été crédités."
+  "upgrade": {
+    "badge": "Espace Jetons",
+    "title": "Boostez Votre Flux Créatif",
+    "subtitle": "Choisissez un forfait de jetons pour alimenter vos interactions avec vos personas IA. Accédez aux meilleurs modèles sans limitation de vitesse.",
+    "popular_badge": "Choix Populaire",
+    "one_time_buy": "achat unique",
+    "includes": "Comprend",
+    "tokens_unit": "jetons",
+    "initiating_checkout": "Initialisation du paiement...",
+    "buy_btn": "Acheter {{name}}",
+    "contact_help": "Besoin d'options personnalisées ou en gros ?",
+    "contact_support": "Contacter le support entreprise",
+    "packs": {
+      "lite": {
+        "name": "Airacter Lite",
+        "price": "4,99 $",
+        "description": "Idéal pour les discussions occasionnelles et les personnalisations mineures.",
+        "features": [
+          "50 000 jetons haute vitesse",
+          "Accès au répertoire principal des personnages",
+          "Temps de réponse standard",
+          "Report des jetons à vie"
+        ]
+      },
+      "standard": {
+        "name": "Airacter Standard",
+        "price": "9,99 $",
+        "description": "Le meilleur choix pour les rédacteurs réguliers et les créateurs de personas.",
+        "features": [
+          "150 000 jetons haute vitesse",
+          "Répertoire complet et avatars personnalisés",
+          "Traitement des réponses prioritaire",
+          "Aucune limite quotidienne d'API",
+          "Report des jetons à vie"
+        ]
+      },
+      "pro": {
+        "name": "Airacter Pro",
+        "price": "19,99 $",
+        "description": "Conçu pour les utilisateurs intensifs, les développeurs et les écrivains.",
+        "features": [
+          "400 000 jetons haute vitesse",
+          "Tous les personnages et constructeurs personnalisés",
+          "Streaming prioritaire ultra-rapide",
+          "Accès à l'API mobile tierce",
+          "Report des jetons à vie"
+        ]
+      }
+    },
+    "errors": {
+      "checkout_failed": "Échec du lancement du paiement",
+      "checkout_generic": "Une erreur est survenue lors du lancement du paiement."
+    }
+  },
+  "checkout": {
+    "back_to_plans": "Retour aux forfaits",
+    "review_order": "Vérifier la commande",
+    "order_summary_title": "Résumé de la commande",
+    "tokens_subtitle": "{{count}} jetons haute vitesse",
+    "subtotal": "Sous-total",
+    "tax": "TVA / Taxe de vente (0 %)",
+    "total_due": "Total à payer",
+    "security_notice": "Les paiements sont simulés en toute sécurité. Aucun argent réel ne sera débité.",
+    "simulator_title": "Paiement simulé sécurisé",
+    "simulator_desc": "Entrez des coordonnées fictives ou utilisez la carte de test standard pour finaliser l'achat.",
+    "card_number_label": "Numéro de carte",
+    "card_number_placeholder": "4242 4242 4242 4242",
+    "expiry_label": "Date d'expiration",
+    "expiry_placeholder": "MM/AA",
+    "cvc_label": "CVC / CVV",
+    "cvc_placeholder": "•••",
+    "cardholder_label": "Nom du titulaire",
+    "cardholder_placeholder": "ex. Jean Dupont",
+    "test_mode_hint_prefix": "Mode Test : Utilisez le numéro de carte",
+    "test_mode_card": "4242 4242 4242 4242",
+    "test_mode_hint_suffix": "avec n'importe quelle date d'expiration et CVC.",
+    "pay_btn": "Payer {{price}} en toute sécurité",
+    "processing": {
+      "step_1": "Sécurisation de la connexion...",
+      "step_2": "Autorisation auprès de l'émetteur...",
+      "step_3": "Vérification du jeton de transaction...",
+      "step_4": "Crédit du solde de jetons...",
+      "do_not_refresh": "Finalisation du rechargement en toute sécurité. Ne pas actualiser ni fermer cette session."
+    },
+    "errors": {
+      "card_number_invalid": "Veuillez entrer un numéro de carte valide à 16 chiffres.",
+      "expiry_invalid": "Veuillez entrer une date d'expiration valide (MM/AA).",
+      "cvc_invalid": "Veuillez entrer un code CVV/CVC valide.",
+      "name_required": "Veuillez entrer le nom du titulaire de la carte.",
+      "verification_failed": "Échec de la vérification du paiement",
+      "generic_error": "Une erreur est survenue lors de la finalisation du paiement."
+    }
+  },
+  "success": {
+    "title": "Paiement effectué !",
+    "description": "Votre paiement a été simulé avec succès et le solde de vos jetons a été mis à jour.",
+    "package_tier": "Niveau du forfait",
+    "tokens_added": "Jetons ajoutés",
+    "transaction_id": "ID de transaction",
+    "ledger_credited": "Les jetons haute vitesse ont été crédités sur votre compte.",
+    "start_chatting_btn": "Commencer à discuter",
+    "view_ledger_btn": "Voir l'historique du compte"
+  }
 }

@@ -5,6 +5,7 @@ import { getInitials } from '@/models/user/helper'
 import { Edit, MessageSquare } from 'lucide-react'
 import { MouseEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface LibraryCharacterRenderProps {
   character: TrendingCharacter
@@ -22,6 +23,7 @@ const LibraryCharacterRender = ({
   isCreator,
 }: LibraryCharacterRenderProps) => {
   const router = useRouter()
+  const { t } = useTranslation('character')
 
   const handleEditRedirect = (e: MouseEvent) => {
     e.preventDefault()
@@ -78,13 +80,13 @@ const LibraryCharacterRender = ({
           className='flex-1 bg-primary/20 text-primary hover:bg-primary/30 font-bold py-2 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 text-sm'
         >
           <MessageSquare size={14} />
-          Use
+          {t('main.explore.card.use')}
         </button>
         {isCreator && (
           <button
             onClick={handleEditRedirect}
             className='p-2.5 border border-border/40 text-outline hover:text-on-surface hover:bg-surface-container rounded-xl transition-all cursor-pointer'
-            title='Edit character'
+            title={t('main.explore.card.edit_character')}
           >
             <Edit size={14} />
           </button>

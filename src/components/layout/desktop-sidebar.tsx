@@ -19,7 +19,7 @@ const DesktopSidebar = ({ user }: { user?: User }) => {
   const navItems = getNavItems(pathname)
 
   return (
-    <nav className='hidden md:flex fixed left-0 top-0 h-full w-[72px] z-50 flex-col items-center py-5 bg-surface-lowest border-r border-border/40 backdrop-blur-xl theme-transition'>
+    <nav className='hidden md:flex fixed left-0 top-0 h-full w-18 z-50 flex-col items-center py-5 bg-surface-lowest border-r border-border/40 backdrop-blur-xl theme-transition'>
       {/* Brand Logo */}
       <div className='mb-8 flex items-center justify-center'>
         <Logo showName={false} href='/chats' />
@@ -29,7 +29,9 @@ const DesktopSidebar = ({ user }: { user?: User }) => {
       <div className='flex flex-col gap-4 grow items-center'>
         {navItems.map((item) => {
           const Icon = item.icon
-          const translatedLabel = t(item.label.toLowerCase() as any, { defaultValue: item.label })
+          const translatedLabel = t(item.label.toLowerCase() as any, {
+            defaultValue: item.label,
+          })
           return (
             <Link
               key={item.href}
@@ -45,7 +47,7 @@ const DesktopSidebar = ({ user }: { user?: User }) => {
               <Icon size={20} className={cn(item.active && 'stroke-[2.5px]')} />
 
               {/* Floating Tooltip */}
-              <span className='absolute left-[76px] px-2.5 py-1.5 rounded-lg bg-surface-highest text-on-surface text-xs font-medium opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 shadow-md whitespace-nowrap z-50 border border-border'>
+              <span className='absolute left-19 px-2.5 py-1.5 rounded-lg bg-surface-highest text-on-surface text-xs font-medium opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 shadow-md whitespace-nowrap z-50 border border-border'>
                 {translatedLabel}
               </span>
             </Link>

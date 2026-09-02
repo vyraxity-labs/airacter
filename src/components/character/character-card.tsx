@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { TrendingCharacter } from '@/models/character/types'
 import CharacterVisualHeader from './character-visual-header'
 import LibraryCharacterRender from './library-character-render'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface CharacterCardProps {
   character: TrendingCharacter
@@ -22,6 +23,7 @@ export function CharacterCard({
   variant = 'explore',
 }: CharacterCardProps) {
   const router = useRouter()
+  const { t } = useTranslation('character')
   const [isPending, startTransition] = useTransition()
   const [localSaved, setLocalSaved] = useState(isSaved)
   const [localSaveCount, setLocalSaveCount] = useState(character.saveCount)
@@ -45,7 +47,7 @@ export function CharacterCard({
       })
 
       if (!response.ok) {
-        throw new Error('Failed to toggle save state')
+        throw new Error(t('main.explore.card.toggle_save_error'))
       }
 
       startTransition(() => {
@@ -95,7 +97,11 @@ export function CharacterCard({
               ? 'bg-primary/80 border-primary/20 text-white shadow-sm'
               : 'bg-background/40 border-white/10 text-white hover:text-primary hover:bg-background/60',
           )}
-          title={localSaved ? 'Remove from Library' : 'Save to Library'}
+          title={
+            localSaved
+              ? t('main.explore.card.remove_from_library')
+              : t('main.explore.card.save_to_library')
+          }
         >
           <Bookmark size={18} className={cn(localSaved && 'fill-current')} />
         </button>
@@ -117,10 +123,14 @@ export function CharacterCard({
 
         <div className='flex items-center justify-between mt-auto pt-3 border-t border-border/10'>
           <span className='text-[11px] text-outline font-medium'>
-            by @{character.creator?.name || 'creator'}
+            {t('main.explore.card.by_creator', {
+              name: character.creator?.name || t('main.explore.card.creator_fallback'),
+            })}
           </span>
           <span className='text-[11px] text-outline'>
-            {localSaveCount} saves
+            {t('main.explore.card.save_count', {
+              count: localSaveCount,
+            })}
           </span>
         </div>
 
@@ -138,12 +148,12 @@ export function CharacterCard({
             {localSaved ? (
               <>
                 <Check size={14} />
-                Saved
+                {t('main.explore.card.saved')}
               </>
             ) : (
               <>
                 <Plus size={14} />
-                Save Library
+                {t('main.explore.card.save_library')}
               </>
             )}
           </button>

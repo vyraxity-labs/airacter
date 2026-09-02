@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Sparkles, Zap, Flame, Check, Loader2, HelpCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface PackOption {
   id: 'lite' | 'standard' | 'pro'
@@ -18,6 +19,7 @@ interface PackOption {
 
 export function UpgradeClient() {
   const router = useRouter()
+  const { t } = useTranslation('upgrade')
   const [loadingPackId, setLoadingPackId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -31,12 +33,14 @@ export function UpgradeClient() {
   const packs: PackOption[] = [
     {
       id: 'lite',
-      name: 'Airacter Lite',
-      price: '$4.99',
+      name: t('upgrade.packs.lite.name'),
+      price: t('upgrade.packs.lite.price'),
       tokens: 50000,
-      description: 'Ideal for occasional casual chats and minor customization.',
+      description: t('upgrade.packs.lite.description'),
       icon: <Sparkles className='text-primary' size={24} />,
-      features: [
+      features: (t('upgrade.packs.lite.features', {
+        returnObjects: true,
+      }) as string[]) || [
         '50,000 High-Speed Tokens',
         'Core Character Directory Access',
         'Standard Response Times',
@@ -45,13 +49,15 @@ export function UpgradeClient() {
     },
     {
       id: 'standard',
-      name: 'Airacter Standard',
-      price: '$9.99',
+      name: t('upgrade.packs.standard.name'),
+      price: t('upgrade.packs.standard.price'),
       tokens: 150000,
-      description: 'Best for regular writers and persona creators.',
+      description: t('upgrade.packs.standard.description'),
       icon: <Zap className='text-secondary' size={24} />,
       popular: true,
-      features: [
+      features: (t('upgrade.packs.standard.features', {
+        returnObjects: true,
+      }) as string[]) || [
         '150,000 High-Speed Tokens',
         'Complete Directory & Custom Avatars',
         'Priority Response Processing',
@@ -61,12 +67,14 @@ export function UpgradeClient() {
     },
     {
       id: 'pro',
-      name: 'Airacter Pro',
-      price: '$19.99',
+      name: t('upgrade.packs.pro.name'),
+      price: t('upgrade.packs.pro.price'),
       tokens: 400000,
-      description: 'Designed for power users, developers, and writers.',
+      description: t('upgrade.packs.pro.description'),
       icon: <Flame className='text-tertiary' size={24} />,
-      features: [
+      features: (t('upgrade.packs.pro.features', {
+        returnObjects: true,
+      }) as string[]) || [
         '400,000 High-Speed Tokens',
         'All Characters & Custom Builders',
         'Ultra-Fast Priority Streaming',
@@ -89,7 +97,7 @@ export function UpgradeClient() {
 
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to start checkout')
+        throw new Error(data.error || t('upgrade.errors.checkout_failed'))
       }
 
       if (isMounted.current) {
@@ -97,25 +105,24 @@ export function UpgradeClient() {
       }
     } catch (err: any) {
       if (isMounted.current) {
-        setErrorMsg(err.message || 'An error occurred starting payment.')
+        setErrorMsg(err.message || t('upgrade.errors.checkout_generic'))
         setLoadingPackId(null)
       }
     }
   }
 
   return (
-    <div className='flex-grow min-h-screen overflow-y-auto custom-scrollbar select-none bg-background pb-24'>
+    <div className='grow min-h-screen overflow-y-auto custom-scrollbar select-none bg-background pb-24'>
       {/* TOP HEADER */}
       <div className='max-w-6xl mx-auto pt-16 px-8 text-center space-y-4'>
         <span className='text-xs font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full uppercase tracking-wider'>
-          Token Workspace
+          {t('upgrade.badge')}
         </span>
         <h1 className='text-3xl md:text-5xl font-black text-on-surface tracking-tight'>
-          Upgrade Your Creative Flow
+          {t('upgrade.title')}
         </h1>
         <p className='text-sm md:text-base text-on-surface-variant max-w-xl mx-auto leading-relaxed'>
-          Choose a token package to power your AI character interactions. Access
-          top-tier models with zero speed throttle.
+          {t('upgrade.subtitle')}
         </p>
 
         {errorMsg && (
@@ -133,13 +140,13 @@ export function UpgradeClient() {
             className={cn(
               'glass-panel rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 relative select-none',
               pack.popular
-                ? 'border-secondary/40 shadow-xl shadow-secondary/5 bg-secondary/[0.01] md:-translate-y-2 scale-102'
+                ? 'border-secondary/40 shadow-xl shadow-secondary/5 bg-secondary/1 md:-translate-y-2 scale-102'
                 : 'border-border/30 hover:border-primary/20',
             )}
           >
             {pack.popular && (
               <span className='absolute -top-3 left-1/2 -translate-x-1/2 bg-secondary text-white font-extrabold text-[10px] uppercase tracking-widest px-3.5 py-1 rounded-full shadow-md'>
-                Popular Choice
+                {t('upgrade.popular_badge')}
               </span>
             )}
 
@@ -154,7 +161,7 @@ export function UpgradeClient() {
                     {pack.price}
                   </div>
                   <div className='text-[10px] text-on-surface-variant uppercase font-bold tracking-wider'>
-                    one-time buy
+                    {t('upgrade.one_time_buy')}
                   </div>
                 </div>
               </div>
@@ -170,13 +177,15 @@ export function UpgradeClient() {
               {/* Token Display */}
               <div className='bg-surface-container/30 border border-border/10 rounded-2xl p-4 mb-6'>
                 <span className='text-[10px] text-on-surface-variant uppercase font-bold tracking-widest block mb-0.5'>
-                  Includes
+                  {t('upgrade.includes')}
                 </span>
                 <div className='flex items-baseline gap-1'>
                   <span className='text-3xl font-black text-on-surface'>
                     {pack.tokens.toLocaleString()}
                   </span>
-                  <span className='text-xs font-bold text-primary'>tokens</span>
+                  <span className='text-xs font-bold text-primary'>
+                    {t('upgrade.tokens_unit')}
+                  </span>
                 </div>
               </div>
 
@@ -209,12 +218,14 @@ export function UpgradeClient() {
               {loadingPackId === pack.id ? (
                 <>
                   <Loader2 className='animate-spin' size={14} />
-                  Initiating Checkout...
+                  {t('upgrade.initiating_checkout')}
                 </>
               ) : (
                 <>
                   <Zap size={14} />
-                  Buy {pack.name.replace('Airacter ', '')}
+                  {t('upgrade.buy_btn', {
+                    name: pack.name.replace('Airacter ', ''),
+                  })}
                 </>
               )}
             </button>
@@ -226,12 +237,12 @@ export function UpgradeClient() {
       <footer className='max-w-md mx-auto text-center mt-12 px-8'>
         <div className='inline-flex items-center gap-1.5 text-xs text-on-surface-variant font-medium'>
           <HelpCircle size={14} className='text-primary' />
-          <span>Need custom or bulk options?</span>
+          <span>{t('upgrade.contact_help')}</span>
           <a
             href='mailto:support@airacter.com'
             className='text-primary hover:underline font-bold'
           >
-            Contact Enterprise Support
+            {t('upgrade.contact_support')}
           </a>
         </div>
       </footer>

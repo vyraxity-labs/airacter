@@ -10,13 +10,13 @@ const AsideBar = ({ children }: { children: ReactNode }) => {
   return (
     <aside
       className={cn(
-        'w-screen md:w-[280px] h-screen fixed left-0 md:left-[72px] top-0 border-r border-border/40 backdrop-blur-sm bg-background/40 z-50 transition-all duration-300',
+        'w-screen md:w-70 h-screen fixed left-0 md:left-18 top-0 border-r border-border/40 backdrop-blur-sm bg-background/40 z-50 transition-all duration-300',
         asideIsOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
       )}
       onClick={() => setAsideIsOpen(false)}
     >
       <div
-        className='flex-col w-[280px] h-full bg-surface-low'
+        className='flex-col w-70 h-full bg-surface-low'
         onClick={(e) => e.stopPropagation()}
       >
         {children}

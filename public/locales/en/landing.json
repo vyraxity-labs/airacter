@@ -1,0 +1,65 @@
+{
+  "header": {
+    "links": {
+      "explore": "Explore",
+      "chats": "Chats",
+      "my_library": "My Library",
+      "settings": "Settings",
+      "admin_console": "Admin Console"
+    },
+    "theme": {
+      "switch_to_light": "Switch to Light Mode",
+      "switch_to_dark": "Switch to Dark Mode"
+    },
+    "cta": {
+      "go_to_chats": "Go to Chats",
+      "login": "Login",
+      "get_started": "Get Started",
+      "account_settings": "Account Settings"
+    }
+  },
+  "hero": {
+    "bring_your_custom": "Bring Your Custom",
+    "ai_characters": "AI Characters",
+    "to_life": "to Life",
+    "hero_paragraph": "Create, customize, and converse with persistent AI personas shaped by custom rules. Fine-tune prompts, tone tags, and custom visual avatars instantly.",
+    "cta": {
+      "start_chatting": "Start Chatting",
+      "register": "Start Free Today",
+      "explore": "Explore Personas"
+    }
+  },
+  "trending_personas": {
+    "title": "Trending Personas",
+    "click_any": "Click any character below to initiate conversation",
+    "view_all": "View All Explore Gallery",
+    "persona": {
+      "verified": "Verified",
+      "tones": "Tones",
+      "chats": "Chats"
+    }
+  },
+  "core_features": {
+    "title": "Core Features",
+    "dynamic": {
+      "title": "Dynamic Prompts",
+      "summary": "Configure strict behaviors, rules, tone chips, and contextual instructions for custom personas."
+    },
+    "gemini": {
+      "title": "Gemini Gateway",
+      "summary": "Stream tokens with Google Gemini models. Real-time token tracking verifies and bills usage."
+    },
+    "mobile_sync": {
+      "title": "Mobile Sync API",
+      "summary": "Generate 30-day pairing JWT keys in your account dashboard to connect external mobile client apps."
+    },
+    "moderation": {
+      "title": "Moderation & Security",
+      "summary": "Full admin dashboard verification queues, content flag logs, and manual credit adjustment controls."
+    }
+  },
+  "footer": {
+    "all_rights": "All rights reserved",
+    "vyraxity": "Vyraxity Labs"
+  }
+}

@@ -5,24 +5,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { User, CreditCard, Shield, Bell, Key } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/client";
 
 export function SettingsSidebar() {
   const pathname = usePathname() || "";
+  const { t } = useTranslation("settings");
 
   const tabs = [
-    { label: "Profile", href: "/settings", icon: User },
-    { label: "Billing", href: "/settings/billing", icon: CreditCard },
-    { label: "Security", href: "/settings/security", icon: Shield },
-    { label: "Notifications", href: "/settings/notifications", icon: Bell },
-    { label: "API Keys", href: "/settings/api-keys", icon: Key },
+    { key: "profile", label: t("sidebar.tabs.profile"), href: "/settings", icon: User },
+    { key: "billing", label: t("sidebar.tabs.billing"), href: "/settings/billing", icon: CreditCard },
+    { key: "security", label: t("sidebar.tabs.security"), href: "/settings/security", icon: Shield },
+    { key: "notifications", label: t("sidebar.tabs.notifications"), href: "/settings/notifications", icon: Bell },
+    { key: "api_keys", label: t("sidebar.tabs.api_keys"), href: "/settings/api-keys", icon: Key },
   ];
 
   return (
     <div className="flex flex-col h-full py-6 px-4">
       <header className="mb-8 px-2">
-        <h1 className="text-2xl font-bold text-primary tracking-tight">Settings</h1>
+        <h1 className="text-2xl font-bold text-primary tracking-tight">
+          {t("sidebar.title")}
+        </h1>
         <p className="text-xs text-on-surface-variant opacity-70">
-          Manage your persona workspace
+          {t("sidebar.subtitle")}
         </p>
       </header>
       <nav className="space-y-1">
@@ -49,11 +53,11 @@ export function SettingsSidebar() {
       <div className="mt-auto">
         <div className="glass-panel p-4 rounded-xl border border-primary/20 bg-primary/5 select-none">
           <p className="text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">
-            Support Tier
+            {t("sidebar.support_tier")}
           </p>
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded">
-              Pro Member
+              {t("sidebar.pro_member")}
             </span>
           </div>
         </div>

@@ -1,10 +1,105 @@
 {
-  "upgrade_title": "Upgrade Your Account",
-  "upgrade_subtitle": "Get more tokens, unlock pro features, and talk to advanced characters.",
-  "lite_plan": "Lite",
-  "standard_plan": "Standard",
-  "pro_plan": "Pro",
-  "subscribe": "Subscribe",
-  "checkout_title": "Billing Checkout",
-  "payout_notice": "Payment successful! Your tokens have been credited."
+  "upgrade": {
+    "badge": "Token Workspace",
+    "title": "Upgrade Your Creative Flow",
+    "subtitle": "Choose a token package to power your AI character interactions. Access top-tier models with zero speed throttle.",
+    "popular_badge": "Popular Choice",
+    "one_time_buy": "one-time buy",
+    "includes": "Includes",
+    "tokens_unit": "tokens",
+    "initiating_checkout": "Initiating Checkout...",
+    "buy_btn": "Buy {{name}}",
+    "contact_help": "Need custom or bulk options?",
+    "contact_support": "Contact Enterprise Support",
+    "packs": {
+      "lite": {
+        "name": "Airacter Lite",
+        "price": "$4.99",
+        "description": "Ideal for occasional casual chats and minor customization.",
+        "features": [
+          "50,000 High-Speed Tokens",
+          "Core Character Directory Access",
+          "Standard Response Times",
+          "Lifetime Roll-over Ledger"
+        ]
+      },
+      "standard": {
+        "name": "Airacter Standard",
+        "price": "$9.99",
+        "description": "Best for regular writers and persona creators.",
+        "features": [
+          "150,000 High-Speed Tokens",
+          "Complete Directory & Custom Avatars",
+          "Priority Response Processing",
+          "No Daily API Rate Limits",
+          "Lifetime Roll-over Ledger"
+        ]
+      },
+      "pro": {
+        "name": "Airacter Pro",
+        "price": "$19.99",
+        "description": "Designed for power users, developers, and writers.",
+        "features": [
+          "400,000 High-Speed Tokens",
+          "All Characters & Custom Builders",
+          "Ultra-Fast Priority Streaming",
+          "Third-Party Mobile API Access",
+          "Lifetime Roll-over Ledger"
+        ]
+      }
+    },
+    "errors": {
+      "checkout_failed": "Failed to start checkout",
+      "checkout_generic": "An error occurred starting payment."
+    }
+  },
+  "checkout": {
+    "back_to_plans": "Back to Plans",
+    "review_order": "Review Order",
+    "order_summary_title": "Order Summary",
+    "tokens_subtitle": "{{count}} High-Speed Tokens",
+    "subtotal": "Subtotal",
+    "tax": "VAT / Sales Tax (0%)",
+    "total_due": "Total Due",
+    "security_notice": "Payments are simulated securely. No real money will be charged.",
+    "simulator_title": "Secure Simulated Checkout",
+    "simulator_desc": "Enter any mock details or use the standard test card credential to complete purchase.",
+    "card_number_label": "Card Number",
+    "card_number_placeholder": "4242 4242 4242 4242",
+    "expiry_label": "Expiry Date",
+    "expiry_placeholder": "MM/YY",
+    "cvc_label": "CVC / CVV",
+    "cvc_placeholder": "•••",
+    "cardholder_label": "Cardholder Name",
+    "cardholder_placeholder": "e.g. John Doe",
+    "test_mode_hint_prefix": "Test Mode: Use the card number",
+    "test_mode_card": "4242 4242 4242 4242",
+    "test_mode_hint_suffix": "with any expiry date and CVC to test.",
+    "pay_btn": "Pay {{price}} Securely",
+    "processing": {
+      "step_1": "Securing connection...",
+      "step_2": "Authorizing with card issuer...",
+      "step_3": "Verifying secure transaction token...",
+      "step_4": "Crediting balance ledger...",
+      "do_not_refresh": "Completing your ledger top-up safely. Do not refresh or close this browser session."
+    },
+    "errors": {
+      "card_number_invalid": "Please enter a valid 16-digit card number.",
+      "expiry_invalid": "Please enter a valid card expiry date (MM/YY).",
+      "cvc_invalid": "Please enter a valid CVV/CVC code.",
+      "name_required": "Please enter the cardholder's name.",
+      "verification_failed": "Payment verification failed",
+      "generic_error": "An error occurred finalizing the payment ledger."
+    }
+  },
+  "success": {
+    "title": "Payment Completed!",
+    "description": "Your payment has been simulated successfully and your account token balance is updated.",
+    "package_tier": "Package Tier",
+    "tokens_added": "Tokens Added",
+    "transaction_id": "Transaction ID",
+    "ledger_credited": "High-speed tokens have been credited to your ledger.",
+    "start_chatting_btn": "Start Chatting Now",
+    "view_ledger_btn": "View Account Ledger"
+  }
 }

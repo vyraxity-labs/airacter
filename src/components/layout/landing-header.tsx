@@ -5,9 +5,11 @@ import { User } from '@/models/user/types'
 import { ArrowRight, Moon, Sun, UserIcon } from 'lucide-react'
 import Link from 'next/link'
 import Logo from '../general/logo'
+import { useTranslation } from '@/lib/i18n/client'
 
 const LandingHeader = ({ user }: { user: User | null }) => {
   const { theme, toggleTheme } = useThemeStore()
+  const { t } = useTranslation('landing')
 
   return (
     <header className='sticky top-0 z-50 h-16 w-full flex justify-between items-center px-8 bg-surface/70 border-b border-border/20 backdrop-blur-md'>
@@ -16,7 +18,7 @@ const LandingHeader = ({ user }: { user: User | null }) => {
       {/* Navigation Links */}
       <nav className='hidden md:flex items-center gap-6 text-xs font-bold text-on-surface-variant'>
         <Link href='/explore' className='hover:text-primary transition-colors'>
-          Explore
+          {t('header.links.explore')}
         </Link>
         {user && (
           <>
@@ -24,26 +26,26 @@ const LandingHeader = ({ user }: { user: User | null }) => {
               href='/chats'
               className='hover:text-primary transition-colors'
             >
-              Chats
+              {t('header.links.chats')}
             </Link>
             <Link
               href='/characters/my'
               className='hover:text-primary transition-colors'
             >
-              My Library
+              {t('header.links.my_library')}
             </Link>
             <Link
               href='/settings'
               className='hover:text-primary transition-colors'
             >
-              Settings
+              {t('header.links.settings')}
             </Link>
             {user.role === 'ADMIN' && (
               <Link
                 href='/admin'
                 className='hover:text-primary transition-colors text-secondary'
               >
-                Admin Console
+                {t('header.links.admin_console')}
               </Link>
             )}
           </>
@@ -55,7 +57,11 @@ const LandingHeader = ({ user }: { user: User | null }) => {
         <button
           onClick={toggleTheme}
           className='p-2 rounded-xl bg-surface-container/50 hover:bg-surface-container border border-border/25 text-on-surface-variant hover:text-on-surface transition-all cursor-pointer'
-          title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+          title={
+            theme === 'dark'
+              ? t('header.theme.switch_to_light')
+              : t('header.theme.switch_to_dark')
+          }
         >
           {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
         </button>
@@ -66,13 +72,13 @@ const LandingHeader = ({ user }: { user: User | null }) => {
               href='/chats'
               className='px-4 py-2 rounded-xl btn-gradient text-xs font-extrabold flex items-center gap-1 cursor-pointer'
             >
-              Go to Chats
+              {t('header.cta.go_to_chats')}
               <ArrowRight size={12} />
             </Link>
             <Link
               href='/settings'
               className='w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xs font-black uppercase hover:bg-primary/20 transition-all overflow-hidden'
-              title='Account Settings'
+              title={t('header.cta.account_settings')}
             >
               {user.image ? (
                 <img
@@ -93,13 +99,13 @@ const LandingHeader = ({ user }: { user: User | null }) => {
               href='/auth/login'
               className='px-4 py-2 rounded-xl border border-border text-on-surface hover:bg-surface-container/50 text-xs font-bold transition-all cursor-pointer'
             >
-              Log In
+              {t('header.cta.login')}
             </Link>
             <Link
               href='/auth/register'
               className='px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold hover:bg-opacity-95 transition-all cursor-pointer shadow-sm shadow-primary/10'
             >
-              Get Started
+              {t('header.cta.get_started')}
             </Link>
           </div>
         )}

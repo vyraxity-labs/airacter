@@ -3,16 +3,18 @@
 import React, { useState, useEffect } from "react";
 import { Bell, Mail, ShieldAlert, Coins, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/client";
 
 interface NotificationSetting {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descKey: string;
   category: "email" | "security" | "usage";
   icon: React.ReactNode;
 }
 
 export function NotificationsClient() {
+  const { t } = useTranslation("settings");
   const [settings, setSettings] = useState<Record<string, boolean>>({
     newsletter: true,
     security_alerts: true,
@@ -55,36 +57,36 @@ export function NotificationsClient() {
   const notificationOptions: NotificationSetting[] = [
     {
       id: "newsletter",
-      title: "News and Product Updates",
-      description: "Receive emails about new features, character releases, and community highlights.",
+      titleKey: "notifications.options.newsletter_title",
+      descKey: "notifications.options.newsletter_desc",
       category: "email",
       icon: <Mail className="text-primary" size={18} />,
     },
     {
       id: "weekly_digest",
-      title: "Weekly Activity Digest",
-      description: "A summary of your creation activity, token usage trends, and popular characters.",
+      titleKey: "notifications.options.weekly_digest_title",
+      descKey: "notifications.options.weekly_digest_desc",
       category: "email",
       icon: <Mail className="text-primary" size={18} />,
     },
     {
       id: "security_alerts",
-      title: "Security and Account Alerts",
-      description: "Important emails regarding login activity, password changes, and account security.",
+      titleKey: "notifications.options.security_alerts_title",
+      descKey: "notifications.options.security_alerts_desc",
       category: "security",
       icon: <ShieldAlert className="text-primary" size={18} />,
     },
     {
       id: "token_milestones",
-      title: "Token Ledger Receipts",
-      description: "Receive confirmations for token purchases and larger transactions.",
+      titleKey: "notifications.options.token_milestones_title",
+      descKey: "notifications.options.token_milestones_desc",
       category: "usage",
       icon: <Coins className="text-primary" size={18} />,
     },
     {
       id: "low_token_warnings",
-      title: "Low Token Warnings",
-      description: "Get in-app notifications and email alerts when your token balance dips below critical thresholds.",
+      titleKey: "notifications.options.low_token_warnings_title",
+      descKey: "notifications.options.low_token_warnings_desc",
       category: "usage",
       icon: <Coins className="text-primary" size={18} />,
     },
@@ -97,7 +99,7 @@ export function NotificationsClient() {
         <div className="flex items-center gap-6">
           <h2 className="text-sm font-bold text-primary flex items-center gap-2">
             <Bell size={16} />
-            Notification Settings
+            {t("notifications.header_title")}
           </h2>
         </div>
         
@@ -109,7 +111,7 @@ export function NotificationsClient() {
           )}
         >
           <Check size={14} />
-          Changes auto-saved
+          {t("notifications.auto_saved_toast")}
         </div>
       </header>
 
@@ -126,9 +128,11 @@ export function NotificationsClient() {
             {/* Email Preferences */}
             <section className="glass-panel rounded-3xl p-8 space-y-6">
               <div>
-                <h3 className="text-base font-bold text-on-surface">Email Subscriptions</h3>
+                <h3 className="text-base font-bold text-on-surface">
+                  {t("notifications.email_subscriptions_title")}
+                </h3>
                 <p className="text-xs text-on-surface-variant mt-0.5">
-                  Select which updates you would like to receive in your inbox.
+                  {t("notifications.email_subscriptions_desc")}
                 </p>
               </div>
 
@@ -145,9 +149,11 @@ export function NotificationsClient() {
                           {opt.icon}
                         </div>
                         <div>
-                          <h4 className="text-xs font-bold text-on-surface">{opt.title}</h4>
+                          <h4 className="text-xs font-bold text-on-surface">
+                            {t(opt.titleKey)}
+                          </h4>
                           <p className="text-[11px] text-on-surface-variant leading-relaxed mt-1">
-                            {opt.description}
+                            {t(opt.descKey)}
                           </p>
                         </div>
                       </div>
@@ -179,9 +185,11 @@ export function NotificationsClient() {
             {/* Account & Usage Notifications */}
             <section className="glass-panel rounded-3xl p-8 space-y-6">
               <div>
-                <h3 className="text-base font-bold text-on-surface">Account & Activity</h3>
+                <h3 className="text-base font-bold text-on-surface">
+                  {t("notifications.account_activity_title")}
+                </h3>
                 <p className="text-xs text-on-surface-variant mt-0.5">
-                  Settings related to account security alerts and token consumption triggers.
+                  {t("notifications.account_activity_desc")}
                 </p>
               </div>
 
@@ -198,9 +206,11 @@ export function NotificationsClient() {
                           {opt.icon}
                         </div>
                         <div>
-                          <h4 className="text-xs font-bold text-on-surface">{opt.title}</h4>
+                          <h4 className="text-xs font-bold text-on-surface">
+                            {t(opt.titleKey)}
+                          </h4>
                           <p className="text-[11px] text-on-surface-variant leading-relaxed mt-1">
-                            {opt.description}
+                            {t(opt.descKey)}
                           </p>
                         </div>
                       </div>

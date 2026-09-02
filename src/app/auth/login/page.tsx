@@ -4,7 +4,7 @@ import LoginContent from '@/components/auth/login-content'
 
 export default function LoginPage() {
   return (
-    <div className='flex-grow flex items-center justify-center p-4 relative overflow-hidden min-h-screen bg-background text-foreground transition-colors duration-300'>
+    <div className='grow flex items-center justify-center p-4 relative overflow-hidden min-h-screen bg-background text-foreground transition-colors duration-300'>
       {/* Ambient background glows */}
       <div className='absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse' />
       <div

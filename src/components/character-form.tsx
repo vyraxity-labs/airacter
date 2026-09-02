@@ -16,10 +16,10 @@ import {
   Check,
   AlertCircle,
   AlertTriangle,
-  HelpCircle,
   Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/client'
 
 const COLOR_PALETTE = [
   { id: 'sky', label: 'Sky Blue', value: '#0ea5e9' },
@@ -109,6 +109,7 @@ export function CharacterForm({
   rejectionReason = '',
 }: CharacterFormProps) {
   const router = useRouter()
+  const { t } = useTranslation('character')
   const [isPending, startTransition] = useTransition()
 
   // Form states
@@ -155,6 +156,7 @@ export function CharacterForm({
     {
       role: 'assistant',
       content:
+        t('main.character_edit.sandbox_initial_msg') ||
         "Hey there! I'm your new character. Start typing in the form to shape how I respond to you here!",
     },
   ])
@@ -191,12 +193,12 @@ export function CharacterForm({
     if (!file) return
 
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError('Image size must be less than 5MB.')
+      setUploadError(t('main.character_edit.errors.image_size'))
       e.target.value = ''
       return
     }
     if (!file.type.startsWith('image/')) {
-      setUploadError('Please select an image file.')
+      setUploadError(t('main.character_edit.errors.image_type'))
       e.target.value = ''
       return
     }
@@ -217,15 +219,16 @@ export function CharacterForm({
       const resData = await response.json()
 
       if (!response.ok) {
-        throw new Error(resData.error || 'Upload failed')
+        throw new Error(
+          resData.error || t('main.character_edit.errors.upload_failed'),
+        )
       }
 
       setAvatarValue(resData.url)
     } catch (err: any) {
       console.error(err)
       setUploadError(
-        err.message ||
-          'Failed to upload image. Ensure Cloudinary credentials are set.',
+        err.message || t('main.character_edit.errors.upload_generic'),
       )
     } finally {
       setIsUploading(false)
@@ -264,48 +267,60 @@ export function CharacterForm({
     setTimeout(() => {
       let reply = ''
       const lowerMsg = userMsg.toLowerCase()
-      const charName = name.trim() || 'Draft Character'
-      const charDesc = description.trim() || 'a work-in-progress persona'
-      const activeTones = tones.join(', ')
+      const charName =
+        name.trim() || t('main.character_edit.sandbox_draft_name')
+      const charDesc =
+        description.trim() || t('main.character_edit.sandbox_draft_desc')
+      const activeTones = tones
+        .map((toneKey) =>
+          t(`main.character_edit.tones.${toneKey}`, { defaultValue: toneKey }),
+        )
+        .join(', ')
 
       if (
         lowerMsg.includes('who are you') ||
         lowerMsg.includes('your name') ||
         lowerMsg.includes('personality')
       ) {
-        reply = `I am ${charName}, ${charDesc}. My directives are shaped by my tones: ${activeTones}. Nice to meet you!`
+        reply = t('main.character_edit.sandbox_reply_identity', {
+          name: charName,
+          desc: charDesc,
+          tones: activeTones,
+        })
       } else if (
         lowerMsg.includes('prompt') ||
         lowerMsg.includes('instruction') ||
         lowerMsg.includes('system')
       ) {
-        reply = `My inner system prompt is: "${systemPrompt.substring(0, 80)}${systemPrompt.length > 80 ? '...' : ''}". It guides my logical processes and response style.`
+        reply = t('main.character_edit.sandbox_reply_prompt', {
+          prompt: `${systemPrompt.substring(0, 80)}${systemPrompt.length > 80 ? '...' : ''}`,
+        })
       } else {
         // Mock responses based on tone
         const responses: Record<string, string[]> = {
           Casual: [
-            `Hey! Honestly, that's pretty interesting. What else is on your mind?`,
-            `Ah, got it. Let's keep chatting about that!`,
+            t('main.character_edit.sandbox_responses.casual_1'),
+            t('main.character_edit.sandbox_responses.casual_2'),
           ],
           Formal: [
-            `I acknowledge your query. Indeed, the matter warrants further analytical investigation.`,
-            `Please specify your requirements further so that I may respond with maximum precision.`,
+            t('main.character_edit.sandbox_responses.formal_1'),
+            t('main.character_edit.sandbox_responses.formal_2'),
           ],
           Humorous: [
-            `Oh, great question! Let me check my imaginary database... Nope, found nothing but cat memes. Just kidding!`,
-            `Haha, that's wild. If I had real hands, I'd give you a high five for that one!`,
+            t('main.character_edit.sandbox_responses.humorous_1'),
+            t('main.character_edit.sandbox_responses.humorous_2'),
           ],
           Stoic: [
-            `Focus on what is within your control. The rest is indifferent.`,
-            `We suffer more in imagination than in reality. Keep your mind steady.`,
+            t('main.character_edit.sandbox_responses.stoic_1'),
+            t('main.character_edit.sandbox_responses.stoic_2'),
           ],
           Empathetic: [
-            `I completely understand how you feel about that. It makes total sense why you'd ask.`,
-            `That sounds like a lot to handle. I'm here to listen and help you sort through it.`,
+            t('main.character_edit.sandbox_responses.empathetic_1'),
+            t('main.character_edit.sandbox_responses.empathetic_2'),
           ],
           Dramatic: [
-            `Aha! The plot thickens! Truly, this is a moment of monumental proportions!`,
-            `How can we stand idle while such epic queries unfold before us?!`,
+            t('main.character_edit.sandbox_responses.dramatic_1'),
+            t('main.character_edit.sandbox_responses.dramatic_2'),
           ],
         }
 
@@ -313,7 +328,7 @@ export function CharacterForm({
         const preferredTone = tones[0] || 'Casual'
         const toneReplies = responses[preferredTone] || responses['Casual']
         const randomIndex = Math.floor(Math.random() * toneReplies.length)
-        reply = `[Preview Sandbox Mode] ${toneReplies[randomIndex]}`
+        reply = `${t('main.character_edit.sandbox_prefix')} ${toneReplies[randomIndex]}`
       }
 
       setSandboxMessages((prev) => [
@@ -328,43 +343,43 @@ export function CharacterForm({
   const validateForm = () => {
     const errors: Record<string, string> = {}
     if (name.trim().length < 3)
-      errors.name = 'Character name must be at least 3 characters.'
+      errors.name = t('main.character_edit.errors.name_min')
     if (name.trim().length > 60)
-      errors.name = 'Character name cannot exceed 60 characters.'
+      errors.name = t('main.character_edit.errors.name_max')
     if (description.trim().length === 0)
-      errors.description = 'Short description is required.'
+      errors.description = t('main.character_edit.errors.desc_required')
     if (description.trim().length > 200)
-      errors.description = 'Description cannot exceed 200 characters.'
+      errors.description = t('main.character_edit.errors.desc_max')
     if (systemPrompt.trim().length < 20)
-      errors.systemPrompt = 'System prompt must be at least 20 characters.'
+      errors.systemPrompt = t('main.character_edit.errors.prompt_min')
     if (systemPrompt.trim().length > 2000)
-      errors.systemPrompt = 'System prompt cannot exceed 2000 characters.'
-    if (tones.length === 0) errors.tones = 'Please select at least 1 tone.'
+      errors.systemPrompt = t('main.character_edit.errors.prompt_max')
+    if (tones.length === 0)
+      errors.tones = t('main.character_edit.errors.tones_required')
 
     const val = avatarValue.trim()
     if (avatarType === 'image' && !val) {
-      errors.avatarValue = 'Image URL is required.'
+      errors.avatarValue = t('main.character_edit.errors.image_url_required')
     } else if (avatarType === 'emoji') {
       if (!val) {
-        errors.avatarValue = 'Emoji value is required.'
+        errors.avatarValue = t('main.character_edit.errors.emoji_required')
       } else {
         const charCount = [...val].length
         if (isEmojiString(val)) {
           if (charCount > 2) {
-            errors.avatarValue = 'Maximum of 2 emoji characters allowed.'
+            errors.avatarValue = t('main.character_edit.errors.emoji_max')
           }
         } else {
           if (charCount > 5) {
-            errors.avatarValue =
-              'Maximum of 5 characters allowed for normal text emoji.'
+            errors.avatarValue = t('main.character_edit.errors.text_emoji_max')
           }
         }
       }
     } else if (avatarType === 'initials') {
       if (!val) {
-        errors.avatarValue = 'Initials value is required.'
+        errors.avatarValue = t('main.character_edit.errors.initials_required')
       } else if ([...val].length > 3) {
-        errors.avatarValue = 'Maximum of 3 initials characters allowed.'
+        errors.avatarValue = t('main.character_edit.errors.initials_max')
       }
     }
 
@@ -409,7 +424,9 @@ export function CharacterForm({
         const resData = await response.json()
 
         if (!response.ok) {
-          throw new Error(resData.error || 'Failed to save character')
+          throw new Error(
+            resData.error || t('main.character_edit.errors.save_failed'),
+          )
         }
 
         router.push('/characters/my')
@@ -417,7 +434,7 @@ export function CharacterForm({
       } catch (err: any) {
         console.error(err)
         setErrorMsg(
-          err.message || 'Failed to save character. Please try again.',
+          err.message || t('main.character_edit.errors.save_generic'),
         )
       }
     })
@@ -436,7 +453,9 @@ export function CharacterForm({
 
         if (!response.ok) {
           const resData = await response.json()
-          throw new Error(resData.error || 'Failed to delete character')
+          throw new Error(
+            resData.error || t('main.character_edit.errors.delete_failed'),
+          )
         }
 
         setShowDeleteConfirm(false)
@@ -444,7 +463,9 @@ export function CharacterForm({
         router.refresh()
       } catch (err: any) {
         console.error(err)
-        setErrorMsg(err.message || 'Failed to delete character.')
+        setErrorMsg(
+          err.message || t('main.character_edit.errors.delete_generic'),
+        )
       }
     })
   }
@@ -455,7 +476,7 @@ export function CharacterForm({
       return (
         <img
           src={avatarValue}
-          alt={name || 'Preview'}
+          alt={name || t('main.character_edit.avatar_preview_alt')}
           className='w-full h-full object-cover rounded-full'
           onError={() => setImageError(true)}
         />
@@ -488,12 +509,14 @@ export function CharacterForm({
       <div className='grow overflow-y-auto custom-scrollbar px-6 md:px-12 py-10'>
         <header className='mb-10'>
           <h1 className='text-2xl md:text-3xl font-extrabold text-primary mb-2 font-sans tracking-tight'>
-            {initialData?.id ? 'Edit Character Studio' : 'Create New Character'}
+            {initialData?.id
+              ? t('main.character_edit.title_edit')
+              : t('main.character_edit.title_create')}
           </h1>
           <p className='text-on-surface-variant text-sm md:text-base leading-relaxed max-w-2xl'>
             {initialData?.id
-              ? "Modify your AI persona's directives, appearance, tones, and access permissions."
-              : "Define your AI persona's essence, avatar design, and behaviors to chat or share."}
+              ? t('main.character_edit.desc_edit')
+              : t('main.character_edit.desc_create')}
           </p>
         </header>
 
@@ -510,7 +533,7 @@ export function CharacterForm({
             <div className='flex items-center gap-3 border-b border-border/10 pb-2'>
               <Fingerprint className='text-primary stroke-[2px]' size={20} />
               <h2 className='text-lg font-bold text-on-surface'>
-                Identity Blueprint
+                {t('main.character_edit.identity_title')}
               </h2>
             </div>
 
@@ -521,7 +544,7 @@ export function CharacterForm({
                   {renderAvatarPreview()}
                 </div>
                 <span className='text-[10px] uppercase font-extrabold tracking-widest text-outline'>
-                  Avatar View
+                  {t('main.character_edit.avatar_view')}
                 </span>
               </div>
 
@@ -532,14 +555,14 @@ export function CharacterForm({
                     className='block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2'
                     htmlFor='character-name'
                   >
-                    Character Name
+                    {t('main.character_edit.name_label')}
                   </label>
                   <input
                     id='character-name'
                     type='text'
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder='e.g. Orion the Strategist'
+                    placeholder={t('main.character_edit.name_placeholder')}
                     className='w-full bg-surface-container border border-border/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all text-on-surface placeholder:text-outline/70'
                   />
                   {fieldErrors.name && (
@@ -551,13 +574,13 @@ export function CharacterForm({
 
                 <div>
                   <label className='block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2'>
-                    Short Description / One-liner Hook
+                    {t('main.character_edit.desc_label')}
                   </label>
                   <input
                     type='text'
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder='Describe their primary function in one catchy sentence...'
+                    placeholder={t('main.character_edit.desc_placeholder')}
                     className='w-full bg-surface-container border border-border/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all text-on-surface placeholder:text-outline/70'
                   />
                   {fieldErrors.description && (
@@ -572,7 +595,7 @@ export function CharacterForm({
             {/* Avatar Values picker tabbed interface */}
             <div className='p-5 bg-surface-container-low rounded-2xl border border-border/10 space-y-4'>
               <span className='block text-xs font-bold text-on-surface-variant uppercase tracking-wider'>
-                Avatar Configurator
+                {t('main.character_edit.avatar_config_title')}
               </span>
 
               <div className='flex gap-2 border-b border-border/10 pb-3 select-none'>
@@ -586,7 +609,7 @@ export function CharacterForm({
                       : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface',
                   )}
                 >
-                  <Smile size={14} /> Emoji
+                  <Smile size={14} /> {t('main.character_edit.tab_emoji')}
                 </button>
                 <button
                   type='button'
@@ -598,7 +621,7 @@ export function CharacterForm({
                       : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface',
                   )}
                 >
-                  <Type size={14} /> Initials
+                  <Type size={14} /> {t('main.character_edit.tab_initials')}
                 </button>
                 <button
                   type='button'
@@ -610,22 +633,25 @@ export function CharacterForm({
                       : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface',
                   )}
                 >
-                  <ImageIcon size={14} /> Custom Image
+                  <ImageIcon size={14} /> {t('main.character_edit.tab_image')}
                 </button>
               </div>
 
               {/* Input for selected type */}
               <div>
                 <label className='block text-[11px] font-bold text-outline uppercase tracking-wider mb-2'>
-                  {avatarType === 'emoji' && 'Type or pick a Single Emoji'}
-                  {avatarType === 'initials' && 'Type 1-3 initials'}
-                  {avatarType === 'image' && 'Enter Image URL or Upload Image'}
+                  {avatarType === 'emoji' &&
+                    t('main.character_edit.input_label_emoji')}
+                  {avatarType === 'initials' &&
+                    t('main.character_edit.input_label_initials')}
+                  {avatarType === 'image' &&
+                    t('main.character_edit.input_label_image')}
                 </label>
 
                 {avatarType === 'emoji' && (
                   <div className='mb-3'>
                     <span className='block text-[10px] font-bold text-outline uppercase tracking-wider mb-2'>
-                      Popular Emojis
+                      {t('main.character_edit.popular_emojis')}
                     </span>
                     <div className='flex gap-2.5 flex-wrap'>
                       {POPULAR_EMOJIS.map((emoji) => (
@@ -662,7 +688,9 @@ export function CharacterForm({
                           type='text'
                           value={avatarValue}
                           onChange={(e) => setAvatarValue(e.target.value)}
-                          placeholder='https://example.com/avatar.png'
+                          placeholder={t(
+                            'main.character_edit.image_url_placeholder',
+                          )}
                           className='w-full bg-surface-container border border-border/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary text-on-surface'
                         />
                       </div>
@@ -688,12 +716,12 @@ export function CharacterForm({
                           {isUploading ? (
                             <>
                               <Loader2 className='w-3.5 h-3.5 animate-spin' />
-                              Uploading...
+                              {t('main.character_edit.uploading')}
                             </>
                           ) : (
                             <>
                               <ImageIcon size={14} />
-                              Upload File
+                              {t('main.character_edit.upload_file')}
                             </>
                           )}
                         </label>
@@ -719,7 +747,7 @@ export function CharacterForm({
               {avatarType !== 'image' && (
                 <div>
                   <label className='block text-[11px] font-bold text-outline uppercase tracking-wider mb-2'>
-                    Avatar Theme Color
+                    {t('main.character_edit.avatar_theme_color')}
                   </label>
                   <div className='flex gap-3 items-center flex-wrap select-none'>
                     {COLOR_PALETTE.map((color) => (
@@ -740,7 +768,9 @@ export function CharacterForm({
                               ? '#ffffff'
                               : 'transparent',
                         }}
-                        title={color.label}
+                        title={t(`main.character_edit.colors.${color.id}`, {
+                          defaultValue: color.label,
+                        })}
                       >
                         {avatarColor === color.value && (
                           <Check
@@ -761,7 +791,7 @@ export function CharacterForm({
             <div className='flex items-center gap-3 border-b border-border/10 pb-2'>
               <Brain className='text-primary stroke-[2px]' size={20} />
               <h2 className='text-lg font-bold text-on-surface'>
-                Directive instructions (System Prompt)
+                {t('main.character_edit.system_prompt_title')}
               </h2>
             </div>
 
@@ -769,7 +799,9 @@ export function CharacterForm({
               <textarea
                 value={systemPrompt}
                 onChange={(e) => setSystemPrompt(e.target.value)}
-                placeholder='Act as a Socratic philosopher who only replies with questions. Do not break character. Speak thoughtfully and encourage critical reflection...'
+                placeholder={t(
+                  'main.character_edit.system_prompt_placeholder',
+                )}
                 rows={6}
                 maxLength={2000}
                 className='w-full bg-surface-container border border-border/20 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all text-on-surface placeholder:text-outline/70 resize-none custom-scrollbar leading-relaxed'
@@ -791,9 +823,7 @@ export function CharacterForm({
               </span>
             )}
             <p className='text-xs text-outline leading-normal font-sans'>
-              This prompt acts as the character's subconscious rules. Specify
-              their identity, speaking style, forbidden topics, memory rules,
-              and backstories.
+              {t('main.character_edit.system_prompt_help')}
             </p>
           </div>
 
@@ -802,16 +832,16 @@ export function CharacterForm({
             {/* Tone select */}
             <div className='space-y-4'>
               <label className='block text-xs font-bold text-on-surface-variant uppercase tracking-wider'>
-                Interaction Tones (Select 1-4)
+                {t('main.character_edit.tones_label')}
               </label>
               <div className='flex flex-wrap gap-2 select-none'>
-                {TONE_OPTIONS.map((t) => {
-                  const isSelected = tones.includes(t)
+                {TONE_OPTIONS.map((t_option) => {
+                  const isSelected = tones.includes(t_option)
                   return (
                     <button
-                      key={t}
+                      key={t_option}
                       type='button'
-                      onClick={() => handleToneToggle(t)}
+                      onClick={() => handleToneToggle(t_option)}
                       className={cn(
                         'px-4 py-2 rounded-full text-xs font-bold border transition-all cursor-pointer',
                         isSelected
@@ -819,7 +849,9 @@ export function CharacterForm({
                           : 'bg-surface-container border-border/20 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface',
                       )}
                     >
-                      {t}
+                      {t(`main.character_edit.tones.${t_option}`, {
+                        defaultValue: t_option,
+                      })}
                     </button>
                   )
                 })}
@@ -834,7 +866,7 @@ export function CharacterForm({
             {/* Category dropdown */}
             <div className='space-y-4'>
               <label className='block text-xs font-bold text-on-surface-variant uppercase tracking-wider'>
-                Category Placement
+                {t('main.character_edit.category_label')}
               </label>
               <select
                 value={category}
@@ -847,7 +879,9 @@ export function CharacterForm({
                     value={cat}
                     className='bg-surface text-on-surface capitalize'
                   >
-                    {cat}
+                    {t(`main.character_edit.categories.${cat}`, {
+                      defaultValue: cat,
+                    })}
                   </option>
                 ))}
               </select>
@@ -859,7 +893,7 @@ export function CharacterForm({
             <div className='flex items-center gap-3 border-b border-border/10 pb-2'>
               <Eye className='text-primary stroke-[2px]' size={20} />
               <h2 className='text-lg font-bold text-on-surface'>
-                Privacy &amp; Permissions
+                {t('main.character_edit.privacy_title')}
               </h2>
             </div>
 
@@ -867,14 +901,19 @@ export function CharacterForm({
               <div className='p-4 rounded-xl border border-error/20 bg-error/10 text-error flex flex-col gap-1.5 select-none animate-pulse'>
                 <div className='flex items-center gap-2 text-xs font-bold'>
                   <AlertTriangle size={14} />
-                  Resubmission Blocked (24-Hour Cooling Policy)
+                  {t('main.character_edit.cooldown_title')}
                 </div>
                 <p className='text-[10px] leading-relaxed opacity-90 font-medium'>
-                  This character was rejected by moderation for: &ldquo;
-                  {rejectionReason}&rdquo;. You can resubmit it for public
-                  directory listing in{' '}
-                  <strong>{cooldownRemainingHours} hours</strong>. In the
-                  meantime, it has been set to private.
+                  {t('main.character_edit.cooldown_desc_prefix')} &ldquo;
+                  {rejectionReason ||
+                    t('main.character_edit.cooldown_default_reason')}
+                  &rdquo;. {t('main.character_edit.cooldown_desc_middle')}{' '}
+                  <strong>
+                    {t('main.character_edit.cooldown_desc_hours', {
+                      count: cooldownRemainingHours,
+                    })}
+                  </strong>
+                  . {t('main.character_edit.cooldown_desc_suffix')}
                 </p>
               </div>
             )}
@@ -882,11 +921,10 @@ export function CharacterForm({
             <div className='flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-border/10'>
               <div className='max-w-[80%]'>
                 <p className='text-sm font-bold text-on-surface'>
-                  Public Visibility
+                  {t('main.character_edit.public_visibility_title')}
                 </p>
                 <p className='text-xs text-on-surface-variant mt-0.5 leading-normal'>
-                  Toggle on to list this character in the public Explore tab.
-                  Off keeps it hidden in your library only.
+                  {t('main.character_edit.public_visibility_desc')}
                 </p>
               </div>
 
@@ -928,7 +966,7 @@ export function CharacterForm({
                   className='px-5 py-3 border border-error/30 text-error rounded-xl font-bold hover:bg-error/5 transition-all flex items-center gap-1.5 text-sm cursor-pointer'
                 >
                   <Trash2 size={16} />
-                  Delete Character
+                  {t('main.character_edit.btn_delete')}
                 </button>
               )}
             </div>
@@ -939,7 +977,7 @@ export function CharacterForm({
                 onClick={() => router.push('/characters/my')}
                 className='px-6 py-3 border border-border hover:bg-surface-container rounded-xl text-on-surface-variant hover:text-on-surface font-bold text-sm transition-all cursor-pointer'
               >
-                Cancel
+                {t('main.character_edit.btn_cancel')}
               </button>
 
               <button
@@ -948,7 +986,9 @@ export function CharacterForm({
                 className='px-8 py-3 rounded-xl btn-gradient text-white font-bold text-sm shadow-md shadow-primary/10 flex items-center gap-2 cursor-pointer hover:opacity-95 transition-opacity'
               >
                 <Save size={16} />
-                {isPending ? 'Saving...' : 'Save Character'}
+                {isPending
+                  ? t('main.character_edit.btn_saving')
+                  : t('main.character_edit.btn_save')}
               </button>
             </div>
           </div>
@@ -960,10 +1000,10 @@ export function CharacterForm({
         {/* Header */}
         <div className='h-16 flex items-center justify-between px-6 border-b border-border/40'>
           <span className='font-bold text-sm text-primary tracking-tight'>
-            Live Sandbox Preview
+            {t('main.character_edit.sandbox_title')}
           </span>
           <span className='px-2.5 py-0.5 rounded-full bg-tertiary/15 border border-tertiary/20 text-tertiary text-[10px] font-bold uppercase tracking-wider'>
-            Draft
+            {t('main.character_edit.sandbox_draft')}
           </span>
         </div>
 
@@ -987,7 +1027,7 @@ export function CharacterForm({
                     !imageError ? (
                       <img
                         src={avatarValue}
-                        alt='AI Avatar'
+                        alt={t('main.character_edit.ai_avatar_alt')}
                         className='w-full h-full object-cover'
                         onError={() => setImageError(true)}
                       />
@@ -1036,7 +1076,7 @@ export function CharacterForm({
                 {avatarType === 'image' && avatarValue.trim() && !imageError ? (
                   <img
                     src={avatarValue}
-                    alt='AI Avatar'
+                    alt={t('main.character_edit.ai_avatar_alt')}
                     className='w-full h-full object-cover'
                     onError={() => setImageError(true)}
                   />
@@ -1060,7 +1100,11 @@ export function CharacterForm({
                   <div className='w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]'></div>
                   <div className='w-1 h-1 bg-primary rounded-full animate-bounce [animation-delay:0.4s]'></div>
                 </div>
-                <span>{name || 'Character'} is typing...</span>
+                <span>
+                  {t('main.character_edit.sandbox_typing', {
+                    name: name || t('main.character_edit.character_fallback'),
+                  })}
+                </span>
               </div>
             </div>
           )}
@@ -1074,7 +1118,7 @@ export function CharacterForm({
               type='text'
               value={sandboxInput}
               onChange={(e) => setSandboxInput(e.target.value)}
-              placeholder='Test interaction...'
+              placeholder={t('main.character_edit.sandbox_placeholder')}
               disabled={isSandboxThinking}
               className='w-full bg-surface-container border border-border/20 rounded-full pl-6 pr-14 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary/40 text-on-surface placeholder:text-outline'
             />
@@ -1087,7 +1131,7 @@ export function CharacterForm({
             </button>
           </form>
           <p className='text-[9px] text-center mt-4 text-outline font-extrabold uppercase tracking-widest font-sans'>
-            Interactive Sandbox
+            {t('main.character_edit.sandbox_footer')}
           </p>
         </div>
       </aside>
@@ -1104,24 +1148,26 @@ export function CharacterForm({
             </button>
 
             <h3 className='text-lg font-bold text-error mb-2 flex items-center gap-2'>
-              <Trash2 size={20} /> Danger: Permanent Deletion
+              <Trash2 size={20} /> {t('main.character_edit.delete_modal_title')}
             </h3>
             <p className='text-sm text-on-surface-variant mb-6 leading-relaxed'>
-              This action cannot be undone. All database records (including
-              saves and chat histories) associated with <strong>{name}</strong>{' '}
-              will be permanently wiped.
+              {t('main.character_edit.delete_modal_desc')} <strong>{name}</strong>{' '}
+              {t('main.character_edit.delete_modal_desc_suffix')}
             </p>
 
             <div className='space-y-4'>
               <label className='block text-xs font-bold text-on-surface-variant uppercase tracking-wider'>
-                Type character name <span className='text-error'>"{name}"</span>{' '}
-                to confirm:
+                {t('main.character_edit.delete_modal_confirm_label')}{' '}
+                <span className='text-error'>"{name}"</span>{' '}
+                {t('main.character_edit.delete_modal_to_confirm')}
               </label>
               <input
                 type='text'
                 value={deleteConfirmInput}
                 onChange={(e) => setDeleteConfirmInput(e.target.value)}
-                placeholder='Type name exactly...'
+                placeholder={t(
+                  'main.character_edit.delete_modal_placeholder',
+                )}
                 className='w-full bg-surface-container-low border border-border/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-error/40 text-on-surface'
               />
 
@@ -1130,14 +1176,14 @@ export function CharacterForm({
                   onClick={() => setShowDeleteConfirm(false)}
                   className='px-5 py-2.5 border border-border rounded-xl font-bold text-xs text-on-surface-variant hover:text-on-surface'
                 >
-                  Cancel
+                  {t('main.character_edit.delete_modal_cancel')}
                 </button>
                 <button
                   onClick={handleDelete}
                   disabled={deleteConfirmInput !== name || isPending}
                   className='px-5 py-2.5 bg-error text-white font-bold rounded-xl text-xs hover:bg-error/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
                 >
-                  Confirm Delete
+                  {t('main.character_edit.delete_modal_confirm')}
                 </button>
               </div>
             </div>
