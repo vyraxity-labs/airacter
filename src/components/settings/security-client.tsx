@@ -15,6 +15,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/client";
 
 interface Session {
   id: string;
@@ -26,6 +27,7 @@ interface Session {
 
 export function SecurityClient() {
   const router = useRouter();
+  const { t } = useTranslation("settings");
   const [isPending, startTransition] = useTransition();
 
   // Password state
@@ -62,11 +64,11 @@ export function SecurityClient() {
     setSessionsError("");
     try {
       const res = await fetch("/api/settings/sessions");
-      if (!res.ok) throw new Error("Failed to fetch sessions");
+      if (!res.ok) throw new Error(t("security.errors.sessions_fetch_failed"));
       const data = await res.json();
       setSessions(data.sessions || []);
     } catch (err: any) {
-      setSessionsError(err.message || "An error occurred loading sessions.");
+      setSessionsError(err.message || t("security.errors.sessions_generic"));
     } finally {
       setSessionsLoading(false);
     }
@@ -78,12 +80,12 @@ export function SecurityClient() {
     setPasswordSuccess(false);
 
     if (newPassword.length < 8) {
-      setPasswordError("New password must be at least 8 characters.");
+      setPasswordError(t("security.errors.password_min"));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("New passwords do not match.");
+      setPasswordError(t("security.errors.password_mismatch"));
       return;
     }
 
@@ -100,7 +102,7 @@ export function SecurityClient() {
 
         const data = await res.json();
         if (!res.ok) {
-          throw new Error(data.error || "Failed to update password");
+          throw new Error(data.error || t("security.errors.password_update_failed"));
         }
 
         setPasswordSuccess(true);
@@ -109,7 +111,7 @@ export function SecurityClient() {
         setConfirmPassword("");
         setTimeout(() => setPasswordSuccess(false), 5000);
       } catch (err: any) {
-        setPasswordError(err.message || "Failed to update password.");
+        setPasswordError(err.message || t("security.errors.password_generic"));
       }
     });
   };
@@ -128,13 +130,13 @@ export function SecurityClient() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to revoke other sessions");
+        throw new Error(t("security.errors.revoke_failed"));
       }
 
       // Refresh session list
       await fetchSessions();
     } catch (err: any) {
-      setSessionsError(err.message || "Failed to revoke other sessions.");
+      setSessionsError(err.message || t("security.errors.revoke_generic"));
     } finally {
       setRevoking(false);
     }
@@ -155,7 +157,7 @@ export function SecurityClient() {
         <div className="flex items-center gap-6">
           <h2 className="text-sm font-bold text-primary flex items-center gap-2">
             <Shield size={16} />
-            Security Settings
+            {t("security.header_title")}
           </h2>
         </div>
       </header>
@@ -170,7 +172,7 @@ export function SecurityClient() {
             <div>
               <h3 className="text-lg font-bold text-on-surface flex items-center gap-2 mb-6">
                 <KeyRound size={18} className="text-primary" />
-                Change Password
+                {t("security.change_password_title")}
               </h3>
 
               {passwordError && (
@@ -182,14 +184,14 @@ export function SecurityClient() {
               {passwordSuccess && (
                 <div className="p-3.5 mb-5 rounded-xl border border-primary/20 bg-primary/10 text-primary text-xs font-semibold flex items-center gap-1.5">
                   <Check size={14} />
-                  Password updated successfully!
+                  {t("security.password_success")}
                 </div>
               )}
 
               <form onSubmit={handleUpdatePassword} className="space-y-4 max-w-md">
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1">
-                    Current Password
+                    {t("security.current_password_label")}
                   </label>
                   <input
                     type="password"
@@ -197,13 +199,13 @@ export function SecurityClient() {
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     disabled={isPending}
                     className="w-full bg-surface-container/50 border border-border/40 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-primary text-sm text-on-surface"
-                    placeholder="••••••••"
+                    placeholder={t("security.current_password_placeholder")}
                   />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1">
-                    New Password
+                    {t("security.new_password_label")}
                   </label>
                   <input
                     type="password"
@@ -211,13 +213,13 @@ export function SecurityClient() {
                     onChange={(e) => setNewPassword(e.target.value)}
                     disabled={isPending}
                     className="w-full bg-surface-container/50 border border-border/40 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-primary text-sm text-on-surface"
-                    placeholder="At least 8 characters"
+                    placeholder={t("security.new_password_placeholder")}
                   />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1">
-                    Confirm New Password
+                    {t("security.confirm_password_label")}
                   </label>
                   <input
                     type="password"
@@ -225,7 +227,7 @@ export function SecurityClient() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={isPending}
                     className="w-full bg-surface-container/50 border border-border/40 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-primary text-sm text-on-surface"
-                    placeholder="Repeat new password"
+                    placeholder={t("security.confirm_password_placeholder")}
                   />
                 </div>
 
@@ -239,7 +241,7 @@ export function SecurityClient() {
                   ) : (
                     <Check size={14} />
                   )}
-                  Update Password
+                  {t("security.update_password_btn")}
                 </button>
               </form>
             </div>
@@ -250,20 +252,20 @@ export function SecurityClient() {
             <div>
               <h3 className="text-lg font-bold text-on-surface flex items-center gap-2 mb-4">
                 <Smartphone size={18} className="text-primary" />
-                Two-Factor Auth
+                {t("security.two_factor_title")}
               </h3>
               <p className="text-xs text-on-surface-variant leading-relaxed mb-6">
-                Protect your account by requiring an authentication token upon login attempts.
+                {t("security.two_factor_desc")}
               </p>
 
               {!is2FALoading && (
                 <div className="bg-surface-container/30 border border-border/30 rounded-2xl p-4 flex items-center justify-between">
                   <div>
                     <span className="text-xs font-bold block text-on-surface">
-                      Authenticator App
+                      {t("security.authenticator_app")}
                     </span>
                     <span className="text-[10px] text-on-surface-variant">
-                      {twoFactorEnabled ? "Configured & Active" : "Not configured"}
+                      {twoFactorEnabled ? t("security.status_configured") : t("security.status_not_configured")}
                     </span>
                   </div>
 
@@ -288,7 +290,7 @@ export function SecurityClient() {
             <div className="mt-8 p-3 rounded-xl bg-primary/5 border border-primary/10 flex items-start gap-2.5">
               <AlertTriangle className="text-primary shrink-0 mt-0.5" size={14} />
               <p className="text-[10px] text-on-surface-variant leading-relaxed">
-                Mock 2FA is currently managed locally on this browser session.
+                {t("security.mock_2fa_notice")}
               </p>
             </div>
           </section>
@@ -300,10 +302,10 @@ export function SecurityClient() {
             <div>
               <h3 className="text-lg font-bold text-on-surface flex items-center gap-2">
                 <History size={16} className="text-primary" />
-                Active Browser Sessions
+                {t("security.sessions_title")}
               </h3>
               <p className="text-xs text-on-surface-variant mt-0.5">
-                The devices and locations currently logged into your account.
+                {t("security.sessions_desc")}
               </p>
             </div>
 
@@ -318,7 +320,7 @@ export function SecurityClient() {
                 ) : (
                   <LogOut size={14} />
                 )}
-                Logout of Other Sessions
+                {t("security.logout_others_btn")}
               </button>
             )}
           </div>
@@ -349,7 +351,7 @@ export function SecurityClient() {
                         </span>
                         {session.isCurrent && (
                           <span className="bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-primary">
-                            Current Session
+                            {t("security.current_session_badge")}
                           </span>
                         )}
                       </div>
@@ -359,12 +361,15 @@ export function SecurityClient() {
                         </span>
                         <span className="text-[10px] text-on-surface-variant/40">•</span>
                         <span className="text-[10px] text-on-surface-variant">
-                          Last active: {session.isCurrent ? "Active Now" : new Date(session.lastActive).toLocaleDateString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {t("security.last_active_prefix")}{" "}
+                          {session.isCurrent
+                            ? t("security.active_now")
+                            : new Date(session.lastActive).toLocaleDateString(undefined, {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                         </span>
                       </div>
                     </div>

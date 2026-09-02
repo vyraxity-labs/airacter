@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface PackDetails {
   id: 'lite' | 'standard' | 'pro'
@@ -20,20 +21,32 @@ interface PackDetails {
   tokens: number
 }
 
-const PACKS: Record<string, PackDetails> = {
-  lite: { id: 'lite', name: 'Airacter Lite', price: '$4.99', tokens: 50000 },
-  standard: {
-    id: 'standard',
-    name: 'Airacter Standard',
-    price: '$9.99',
-    tokens: 150000,
-  },
-  pro: { id: 'pro', name: 'Airacter Pro', price: '$19.99', tokens: 400000 },
-}
-
 export function CheckoutClient() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useTranslation('upgrade')
+
+  const PACKS: Record<string, PackDetails> = {
+    lite: {
+      id: 'lite',
+      name: t('upgrade.packs.lite.name'),
+      price: t('upgrade.packs.lite.price'),
+      tokens: 50000,
+    },
+    standard: {
+      id: 'standard',
+      name: t('upgrade.packs.standard.name'),
+      price: t('upgrade.packs.standard.price'),
+      tokens: 150000,
+    },
+    pro: {
+      id: 'pro',
+      name: t('upgrade.packs.pro.name'),
+      price: t('upgrade.packs.pro.price'),
+      tokens: 400000,
+    },
+  }
+
   const packId = searchParams.get('packId') || 'standard'
   const pack = PACKS[packId] || PACKS.standard
 
@@ -52,7 +65,7 @@ export function CheckoutClient() {
 
   // Checkout process states
   const [isProcessing, setIsProcessing] = useState(false)
-  const [stepText, setStepText] = useState('Securing connection...')
+  const [stepText, setStepText] = useState(t('checkout.processing.step_1'))
   const [errorMsg, setErrorMsg] = useState('')
 
   const formatCardNumber = (value: string) => {
@@ -85,19 +98,19 @@ export function CheckoutClient() {
     setErrorMsg('')
 
     if (cardNumber.replace(/\s/g, '').length < 16) {
-      setErrorMsg('Please enter a valid 16-digit card number.')
+      setErrorMsg(t('checkout.errors.card_number_invalid'))
       return
     }
     if (expiry.length < 5) {
-      setErrorMsg('Please enter a valid card expiry date (MM/YY).')
+      setErrorMsg(t('checkout.errors.expiry_invalid'))
       return
     }
     if (cvc.length < 3) {
-      setErrorMsg('Please enter a valid CVV/CVC code.')
+      setErrorMsg(t('checkout.errors.cvc_invalid'))
       return
     }
     if (!name.trim()) {
-      setErrorMsg("Please enter the cardholder's name.")
+      setErrorMsg(t('checkout.errors.name_required'))
       return
     }
 
@@ -105,10 +118,10 @@ export function CheckoutClient() {
 
     // Simulate interactive secure payment steps
     const steps = [
-      'Securing connection...',
-      'Authorizing with card issuer...',
-      'Verifying secure transaction token...',
-      'Crediting balance ledger...',
+      t('checkout.processing.step_1'),
+      t('checkout.processing.step_2'),
+      t('checkout.processing.step_3'),
+      t('checkout.processing.step_4'),
     ]
 
     for (let i = 0; i < steps.length; i++) {
@@ -127,7 +140,7 @@ export function CheckoutClient() {
 
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data.error || 'Payment verification failed')
+        throw new Error(data.error || t('checkout.errors.verification_failed'))
       }
 
       if (isMounted.current) {
@@ -137,16 +150,14 @@ export function CheckoutClient() {
       }
     } catch (err: any) {
       if (isMounted.current) {
-        setErrorMsg(
-          err.message || 'An error occurred finalizing the payment ledger.',
-        )
+        setErrorMsg(err.message || t('checkout.errors.generic_error'))
         setIsProcessing(false)
       }
     }
   }
 
   return (
-    <div className='flex-grow min-h-screen overflow-y-auto custom-scrollbar select-none bg-background pb-24'>
+    <div className='grow min-h-screen overflow-y-auto custom-scrollbar select-none bg-background pb-24'>
       <div className='max-w-5xl mx-auto py-10 px-8'>
         {/* BACK ACTION */}
         <Link
@@ -160,7 +171,7 @@ export function CheckoutClient() {
           )}
         >
           <ArrowLeft size={14} />
-          Back to Plans
+          {t('checkout.back_to_plans')}
         </Link>
 
         {errorMsg && (
@@ -174,10 +185,10 @@ export function CheckoutClient() {
           <section className='lg:col-span-5 glass-panel rounded-3xl p-6 space-y-6'>
             <div>
               <span className='text-[10px] text-primary uppercase font-bold tracking-widest block mb-1'>
-                Review Order
+                {t('checkout.review_order')}
               </span>
               <h3 className='text-lg font-bold text-on-surface'>
-                Order Summary
+                {t('checkout.order_summary_title')}
               </h3>
             </div>
 
@@ -191,7 +202,9 @@ export function CheckoutClient() {
                   {pack.name}
                 </h4>
                 <p className='text-xs text-on-surface-variant mt-0.5'>
-                  {pack.tokens.toLocaleString()} High-Speed Tokens
+                  {t('checkout.tokens_subtitle', {
+                    count: pack.tokens.toLocaleString(),
+                  })}
                 </p>
               </div>
             </div>
@@ -200,20 +213,20 @@ export function CheckoutClient() {
             <div className='space-y-3.5 pt-4 border-t border-border/20'>
               <div className='flex justify-between items-center text-xs'>
                 <span className='text-on-surface-variant font-medium'>
-                  Subtotal
+                  {t('checkout.subtotal')}
                 </span>
                 <span className='text-on-surface font-bold'>{pack.price}</span>
               </div>
               <div className='flex justify-between items-center text-xs'>
                 <span className='text-on-surface-variant font-medium'>
-                  VAT / Sales Tax (0%)
+                  {t('checkout.tax')}
                 </span>
                 <span className='text-on-surface font-bold'>$0.00</span>
               </div>
 
               <div className='flex justify-between items-center pt-3 border-t border-dashed border-border/20'>
                 <span className='text-sm font-bold text-on-surface'>
-                  Total Due
+                  {t('checkout.total_due')}
                 </span>
                 <span className='text-lg font-black text-primary'>
                   {pack.price}
@@ -224,9 +237,7 @@ export function CheckoutClient() {
             {/* Security trust badge */}
             <div className='pt-2 flex items-center gap-2 text-[10px] text-on-surface-variant/70 font-semibold leading-relaxed'>
               <ShieldCheck className='text-primary shrink-0' size={16} />
-              <span>
-                Payments are simulated securely. No real money will be charged.
-              </span>
+              <span>{t('checkout.security_notice')}</span>
             </div>
           </section>
 
@@ -239,8 +250,7 @@ export function CheckoutClient() {
                   {stepText}
                 </h4>
                 <p className='text-xs text-on-surface-variant max-w-xs leading-relaxed'>
-                  Completing your ledger top-up safely. Do not refresh or close
-                  this browser session.
+                  {t('checkout.processing.do_not_refresh')}
                 </p>
               </div>
             ) : (
@@ -248,11 +258,10 @@ export function CheckoutClient() {
                 <div>
                   <h3 className='text-base font-bold text-on-surface flex items-center gap-2'>
                     <CreditCard size={18} className='text-primary' />
-                    Secure Simulated Checkout
+                    {t('checkout.simulator_title')}
                   </h3>
                   <p className='text-xs text-on-surface-variant mt-1 leading-relaxed'>
-                    Enter any mock details or use the standard test card
-                    credential to complete purchase.
+                    {t('checkout.simulator_desc')}
                   </p>
                 </div>
 
@@ -260,7 +269,7 @@ export function CheckoutClient() {
                   {/* Card Number */}
                   <div className='space-y-1.5'>
                     <label className='text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1'>
-                      Card Number
+                      {t('checkout.card_number_label')}
                     </label>
                     <div className='relative'>
                       <input
@@ -271,7 +280,7 @@ export function CheckoutClient() {
                         }
                         maxLength={19}
                         className='w-full bg-surface-container/50 border border-border/40 rounded-xl p-3 pl-10 focus:outline-none focus:ring-1 focus:ring-primary text-sm text-on-surface font-mono'
-                        placeholder='4242 4242 4242 4242'
+                        placeholder={t('checkout.card_number_placeholder')}
                       />
                       <Lock
                         className='absolute left-3.5 top-3.5 text-on-surface-variant/50'
@@ -284,7 +293,7 @@ export function CheckoutClient() {
                   <div className='grid grid-cols-2 gap-4'>
                     <div className='space-y-1.5'>
                       <label className='text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1'>
-                        Expiry Date
+                        {t('checkout.expiry_label')}
                       </label>
                       <input
                         type='text'
@@ -294,12 +303,12 @@ export function CheckoutClient() {
                         }
                         maxLength={5}
                         className='w-full bg-surface-container/50 border border-border/40 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-primary text-sm text-on-surface font-mono'
-                        placeholder='MM/YY'
+                        placeholder={t('checkout.expiry_placeholder')}
                       />
                     </div>
                     <div className='space-y-1.5'>
                       <label className='text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1'>
-                        CVC / CVV
+                        {t('checkout.cvc_label')}
                       </label>
                       <input
                         type='password'
@@ -309,7 +318,7 @@ export function CheckoutClient() {
                         }
                         maxLength={4}
                         className='w-full bg-surface-container/50 border border-border/40 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-primary text-sm text-on-surface font-mono'
-                        placeholder='•••'
+                        placeholder={t('checkout.cvc_placeholder')}
                       />
                     </div>
                   </div>
@@ -317,14 +326,14 @@ export function CheckoutClient() {
                   {/* Name on Card */}
                   <div className='space-y-1.5'>
                     <label className='text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1'>
-                      Cardholder Name
+                      {t('checkout.cardholder_label')}
                     </label>
                     <input
                       type='text'
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className='w-full bg-surface-container/50 border border-border/40 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-primary text-sm text-on-surface font-sans'
-                      placeholder='e.g. John Doe'
+                      placeholder={t('checkout.cardholder_placeholder')}
                     />
                   </div>
                 </div>
@@ -335,9 +344,9 @@ export function CheckoutClient() {
                     size={14}
                   />
                   <p className='text-[10px] text-on-surface-variant leading-relaxed'>
-                    Test Mode: Use the card number{' '}
-                    <strong>4242 4242 4242 4242</strong> with any expiry date
-                    and CVC to test.
+                    {t('checkout.test_mode_hint_prefix')}{' '}
+                    <strong>{t('checkout.test_mode_card')}</strong>{' '}
+                    {t('checkout.test_mode_hint_suffix')}
                   </p>
                 </div>
 
@@ -347,7 +356,7 @@ export function CheckoutClient() {
                   className='w-full py-4 rounded-xl bg-primary text-white font-extrabold text-xs hover:bg-opacity-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-primary/10'
                 >
                   <Lock size={14} />
-                  Pay {pack.price} Securely
+                  {t('checkout.pay_btn', { price: pack.price })}
                 </button>
               </form>
             )}

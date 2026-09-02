@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { auth } from '@/auth'
 import { DashboardShell } from '@/components/dashboard-shell'
 import { ExploreSidebar } from './explore-sidebar'
-import { ExploreSort } from './explore-sort'
+import { ExploreGalleryHeader } from './explore-gallery-header'
 import { CharacterCard } from '@/components/character/character-card'
 import { redirect } from 'next/navigation'
 import { runExplorePageQuery } from '@/models/character/query'
@@ -68,20 +68,10 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
 
           {/* 2. Main Character Gallery */}
           <section>
-            <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-2 mb-8 border-b border-border/10 pb-4'>
-              <div className='flex items-center gap-3'>
-                <h2 className='text-xl font-bold text-on-surface'>
-                  {q || category !== 'all'
-                    ? 'Search Results'
-                    : 'Public Personas'}
-                </h2>
-                <span className='text-xs px-2.5 py-1 bg-surface-container border border-border/20 text-on-surface-variant font-semibold rounded-full'>
-                  {total} {total === 1 ? 'persona' : 'personas'}
-                </span>
-              </div>
-
-              <ExploreSort />
-            </div>
+            <ExploreGalleryHeader
+              isFiltered={Boolean(q || category !== 'all')}
+              total={total}
+            />
 
             {characters.length === 0 ? (
               <EmptyCharacterRender />

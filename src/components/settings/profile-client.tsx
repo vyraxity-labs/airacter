@@ -8,15 +8,14 @@ import {
   User as UserIcon,
   Coins,
   Trash2,
-  Edit,
   Check,
   Loader2,
   History,
   ShieldAlert,
-  ArrowRight,
   UserCheck,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/client'
 
 interface Transaction {
   id: string
@@ -44,6 +43,7 @@ export function ProfileClient({
   initialTransactions,
 }: ProfileClientProps) {
   const router = useRouter()
+  const { t } = useTranslation('settings')
   const [isPending, startTransition] = useTransition()
 
   const [displayName, setDisplayName] = useState(user.name)
@@ -66,7 +66,7 @@ export function ProfileClient({
   const handleUpdateName = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!displayName.trim() || displayName.trim().length < 2) {
-      setErrorMsg('Display name must be at least 2 characters.')
+      setErrorMsg(t('profile.errors.name_min'))
       return
     }
 
@@ -84,7 +84,7 @@ export function ProfileClient({
         const resData = await response.json()
 
         if (!response.ok) {
-          throw new Error(resData.error || 'Failed to update profile name')
+          throw new Error(resData.error || t('profile.errors.name_save_failed'))
         }
 
         setSaveSuccess(true)
@@ -92,7 +92,7 @@ export function ProfileClient({
         router.refresh()
         setTimeout(() => setSaveSuccess(false), 3000)
       } catch (err: any) {
-        setErrorMsg(err.message || 'Failed to save. Please try again.')
+        setErrorMsg(err.message || t('profile.errors.generic_save'))
       }
     })
   }
@@ -109,12 +109,12 @@ export function ProfileClient({
 
       if (!response.ok) {
         const resData = await response.json()
-        throw new Error(resData.error || 'Failed to delete account')
+        throw new Error(resData.error || t('profile.errors.delete_failed'))
       }
 
       await signOut({ callbackUrl: '/auth/register' })
     } catch (err: any) {
-      setErrorMsg(err.message || 'An error occurred during account deletion.')
+      setErrorMsg(err.message || t('profile.errors.delete_generic'))
       setIsDeleting(false)
       setShowDeleteModal(false)
     }
@@ -135,7 +135,7 @@ export function ProfileClient({
         <div className='flex items-center gap-6'>
           <h2 className='text-sm font-bold text-primary flex items-center gap-2'>
             <UserIcon size={16} />
-            Profile Settings
+            {t('profile.header_title')}
           </h2>
         </div>
       </header>
@@ -158,7 +158,7 @@ export function ProfileClient({
                     {user.image ? (
                       <img
                         src={user.image}
-                        alt={displayName || 'User Profile'}
+                        alt={displayName || t('profile.user_profile_alt')}
                         className='w-24 h-24 rounded-full border-4 border-surface-container object-cover'
                       />
                     ) : (
@@ -169,7 +169,7 @@ export function ProfileClient({
                   </div>
                   <div>
                     <h3 className='text-2xl font-bold text-on-surface'>
-                      {displayName || 'User'}
+                      {displayName || t('profile.user_fallback')}
                     </h3>
                     <p className='text-xs text-on-surface-variant font-medium mt-1'>
                       {user.email}
@@ -182,7 +182,7 @@ export function ProfileClient({
                     onClick={() => setIsEditing(true)}
                     className='px-6 py-2.5 rounded-full border border-primary/30 text-primary hover:bg-primary/10 transition-all font-bold text-xs cursor-pointer'
                   >
-                    Edit Profile
+                    {t('profile.edit_profile_btn')}
                   </button>
                 )}
               </div>
@@ -194,7 +194,7 @@ export function ProfileClient({
                 >
                   <div className='space-y-1.5'>
                     <label className='text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1'>
-                      Display Name
+                      {t('profile.display_name_label')}
                     </label>
                     <input
                       type='text'
@@ -202,7 +202,7 @@ export function ProfileClient({
                       onChange={(e) => setDisplayName(e.target.value)}
                       disabled={isPending}
                       className='w-full bg-surface-container/50 border border-border/40 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-primary text-sm text-on-surface'
-                      placeholder='Enter display name'
+                      placeholder={t('profile.display_name_placeholder')}
                     />
                   </div>
                   <div className='flex gap-3'>
@@ -216,7 +216,7 @@ export function ProfileClient({
                       ) : (
                         <Check size={14} />
                       )}
-                      Save
+                      {t('profile.save_btn')}
                     </button>
                     <button
                       type='button'
@@ -226,7 +226,7 @@ export function ProfileClient({
                       }}
                       className='px-5 py-2.5 rounded-xl border border-border text-on-surface hover:bg-surface-container font-semibold text-xs cursor-pointer'
                     >
-                      Cancel
+                      {t('profile.cancel_btn')}
                     </button>
                   </div>
                 </form>
@@ -234,15 +234,15 @@ export function ProfileClient({
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-4'>
                   <div className='space-y-1'>
                     <label className='text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1'>
-                      Display Name
+                      {t('profile.display_name_label')}
                     </label>
                     <div className='bg-surface-container/30 p-3.5 rounded-xl border border-border/20 text-sm font-semibold text-on-surface'>
-                      {displayName || 'None set'}
+                      {displayName || t('profile.none_set')}
                     </div>
                   </div>
                   <div className='space-y-1'>
                     <label className='text-[10px] text-on-surface-variant uppercase font-bold tracking-wider ml-1'>
-                      Email Address
+                      {t('profile.email_label')}
                     </label>
                     <div className='bg-surface-container/30 p-3.5 rounded-xl border border-border/20 text-sm font-semibold text-on-surface-variant'>
                       {user.email}
@@ -255,7 +255,7 @@ export function ProfileClient({
             {saveSuccess && (
               <div className='mt-6 flex items-center gap-1.5 text-xs text-primary font-bold'>
                 <UserCheck size={14} />
-                Profile name updated successfully.
+                {t('profile.success_message')}
               </div>
             )}
           </section>
@@ -266,17 +266,19 @@ export function ProfileClient({
               <div className='flex justify-between items-start mb-6'>
                 <Coins size={28} className='text-white' />
                 <span className='bg-white/20 border border-white/10 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm'>
-                  Active Plan
+                  {t('profile.active_plan_badge')}
                 </span>
               </div>
               <h4 className='text-[10px] uppercase tracking-widest opacity-80 font-bold mb-1'>
-                Available Balance
+                {t('profile.available_balance_title')}
               </h4>
               <div className='flex items-baseline gap-1.5 mb-6'>
                 <span className='text-4xl font-extrabold leading-none'>
                   {initialBalance.toLocaleString()}
                 </span>
-                <span className='text-xs font-semibold opacity-85'>tokens</span>
+                <span className='text-xs font-semibold opacity-85'>
+                  {t('profile.tokens_unit')}
+                </span>
               </div>
 
               {/* Progress bar mock */}
@@ -287,7 +289,7 @@ export function ProfileClient({
                 ></div>
               </div>
               <p className='text-[10px] opacity-80 mb-8 font-medium'>
-                Token allocation re-calculates instantly on chat activities.
+                {t('profile.balance_note')}
               </p>
             </div>
 
@@ -296,7 +298,7 @@ export function ProfileClient({
               className='relative z-10 w-full bg-white text-primary text-center py-3 rounded-xl font-extrabold hover:bg-opacity-95 transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer'
             >
               <Coins size={14} />
-              Buy Tokens
+              {t('profile.buy_tokens_btn')}
             </Link>
             <div className='absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl'></div>
           </section>
@@ -307,7 +309,7 @@ export function ProfileClient({
           <div className='flex justify-between items-center mb-6'>
             <h3 className='text-lg font-bold text-on-surface flex items-center gap-2'>
               <History size={16} className='text-primary' />
-              Recent Usage Ledger
+              {t('profile.ledger_title')}
             </h3>
           </div>
 
@@ -315,10 +317,10 @@ export function ProfileClient({
             <table className='w-full text-left'>
               <thead>
                 <tr className='border-b border-border/40 text-on-surface-variant font-extrabold text-[10px] uppercase tracking-widest'>
-                  <th className='pb-4 px-2'>Description / Chat</th>
-                  <th className='pb-4'>Tokens</th>
-                  <th className='pb-4'>Transaction Type</th>
-                  <th className='pb-4 text-right'>Date</th>
+                  <th className='pb-4 px-2'>{t('profile.table.desc_chat')}</th>
+                  <th className='pb-4'>{t('profile.table.tokens')}</th>
+                  <th className='pb-4'>{t('profile.table.tx_type')}</th>
+                  <th className='pb-4 text-right'>{t('profile.table.date')}</th>
                 </tr>
               </thead>
               <tbody className='text-xs font-medium'>
@@ -328,7 +330,7 @@ export function ProfileClient({
                       colSpan={4}
                       className='py-8 text-center text-on-surface-variant opacity-60'
                     >
-                      No recent token usage recorded.
+                      {t('profile.table.empty')}
                     </td>
                   </tr>
                 ) : (
@@ -384,11 +386,11 @@ export function ProfileClient({
             <div className='flex items-start gap-4'>
               <ShieldAlert size={24} className='text-error shrink-0 mt-1' />
               <div>
-                <h4 className='font-bold text-sm text-error'>Danger Zone</h4>
+                <h4 className='font-bold text-sm text-error'>
+                  {t('profile.danger_zone.title')}
+                </h4>
                 <p className='text-xs text-on-surface-variant max-w-lg mt-1 leading-relaxed'>
-                  Permanently delete your account and all associated persona
-                  data, saved libraries, active chats, and tokens. This action
-                  is irreversible.
+                  {t('profile.danger_zone.description')}
                 </p>
               </div>
             </div>
@@ -399,7 +401,7 @@ export function ProfileClient({
               }}
               className='px-6 py-3 rounded-xl border border-error/50 text-error hover:bg-error/10 hover:border-error transition-all font-bold text-xs scale-98 active:scale-95 cursor-pointer shrink-0'
             >
-              Delete Account
+              {t('profile.danger_zone.delete_account_btn')}
             </button>
           </div>
         </section>
@@ -411,21 +413,21 @@ export function ProfileClient({
           <div className='w-full max-w-md p-6 rounded-2xl glass-panel border border-error/20 bg-surface shadow-2xl relative'>
             <h3 className='text-lg font-bold text-error flex items-center gap-2 mb-4'>
               <ShieldAlert size={20} />
-              Confirm Account Deletion
+              {t('profile.delete_modal.title')}
             </h3>
             <p className='text-xs text-on-surface-variant leading-relaxed mb-6'>
-              This will permanently delete your account. To confirm, please type{' '}
+              {t('profile.delete_modal.description_prefix')}{' '}
               <span className='font-extrabold text-on-surface bg-surface-container px-2 py-0.5 rounded border border-border'>
-                DELETE
+                {t('profile.delete_modal.keyword')}
               </span>{' '}
-              below.
+              {t('profile.delete_modal.description_suffix')}
             </p>
             <input
               type='text'
               value={deleteConfirmInput}
               onChange={(e) => setDeleteConfirmInput(e.target.value)}
               className='w-full bg-surface-container-high/40 border border-error/20 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-error text-sm text-on-surface mb-6'
-              placeholder='Type DELETE to confirm'
+              placeholder={t('profile.delete_modal.input_placeholder')}
             />
             <div className='flex gap-3 justify-end'>
               <button
@@ -442,14 +444,14 @@ export function ProfileClient({
                 ) : (
                   <Trash2 size={14} />
                 )}
-                Permanently Delete
+                {t('profile.delete_modal.confirm_btn')}
               </button>
               <button
                 disabled={isDeleting}
                 onClick={() => setShowDeleteModal(false)}
                 className='px-5 py-2.5 rounded-xl border border-border text-on-surface hover:bg-surface-container font-semibold text-xs cursor-pointer'
               >
-                Cancel
+                {t('profile.delete_modal.cancel_btn')}
               </button>
             </div>
           </div>

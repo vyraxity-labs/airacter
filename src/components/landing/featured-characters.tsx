@@ -6,6 +6,7 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import CharacterAvatar from '../character/character-avatar'
+import { useTranslation } from '@/lib/i18n/client'
 
 const FeaturedCharacters = ({
   featuredCharacters,
@@ -15,6 +16,7 @@ const FeaturedCharacters = ({
   user: User | null
 }) => {
   const router = useRouter()
+  const { t } = useTranslation('landing')
 
   const handleCharacterClick = (slug: string) => {
     if (user) {
@@ -30,17 +32,17 @@ const FeaturedCharacters = ({
       <div className='flex justify-between items-end'>
         <div>
           <h2 className='text-xl font-bold text-on-surface'>
-            Trending Personas
+            {t('trending_personas.title')}
           </h2>
           <p className='text-xs text-on-surface-variant mt-0.5'>
-            Click any character below to initiate conversation.
+            {t('trending_personas.click_any')}
           </p>
         </div>
         <Link
           href='/explore'
           className='text-xs text-primary font-bold hover:underline flex items-center gap-1'
         >
-          View All Explore Gallery
+          {t('trending_personas.view_all')}
           <ArrowRight size={12} />
         </Link>
       </div>
@@ -61,7 +63,7 @@ const FeaturedCharacters = ({
                   </h4>
                   {char.isVerified && (
                     <span className='text-[9px] bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.2 rounded font-bold uppercase tracking-wider'>
-                      Verified
+                      {t('trending_personas.persona.verified')}
                     </span>
                   )}
                 </div>
@@ -76,10 +78,12 @@ const FeaturedCharacters = ({
 
             <div className='pt-3 border-t border-border/10 flex justify-between items-center text-[10px] text-on-surface-variant'>
               <span>
-                Tones: <strong>{char.tone.slice(0, 2).join(', ')}</strong>
+                {t('trending_personas.persona.tones')}:{' '}
+                <strong>{char.tone.slice(0, 2).join(', ')}</strong>
               </span>
               <span>
-                Chats: <strong>{char.usageCount.toLocaleString()}</strong>
+                {t('trending_personas.persona.chats')}:{' '}
+                <strong>{char.usageCount.toLocaleString()}</strong>
               </span>
             </div>
           </div>
