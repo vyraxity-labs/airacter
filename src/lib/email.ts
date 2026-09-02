@@ -4,13 +4,26 @@ import { sendEmail, renderVerificationEmailHtml } from './notifications/provider
 
 export { sendEmail, renderVerificationEmailHtml }
 
-export async function sendVerificationEmail(email: string, token: string, userId?: string): Promise<boolean> {
+export async function sendVerificationEmail(
+  email: string,
+  token: string,
+  userId?: string
+): Promise<boolean> {
+  const channelPreferences: NotificationChannel[] = [NotificationChannel.email]
+  if (userId) {
+    channelPreferences.push(NotificationChannel.in_app)
+  }
+
   const result = await notify({
     userId,
     email,
     eventType: 'verification_email',
-    channelPreferences: [NotificationChannel.email],
-    variables: { token },
+    channelPreferences,
+    variables: {
+      token,
+      title: 'Verify your email - Airacter',
+      body: 'Please verify your email address to activate your account and claim your welcome tokens.',
+    },
   })
 
   return result.success

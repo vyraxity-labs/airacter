@@ -8,8 +8,15 @@ const globalForPrisma = globalThis as unknown as {
 
 let prismaInstance: PrismaClient;
 
-if (globalForPrisma.prisma && (!(globalForPrisma.prisma as any).tokenGrant || !(globalForPrisma.prisma as any).notificationPreference)) {
-  console.warn('[Prisma] Cached instance is missing tokenGrant or notificationPreference. Re-initializing client.')
+if (
+  globalForPrisma.prisma &&
+  (!(globalForPrisma.prisma as any).tokenGrant ||
+    !(globalForPrisma.prisma as any).notificationPreference ||
+    !(globalForPrisma.prisma as any).notification)
+) {
+  console.warn(
+    '[Prisma] Cached instance is missing models. Re-initializing client.',
+  )
   globalForPrisma.prisma = undefined
 }
 
