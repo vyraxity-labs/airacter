@@ -27,15 +27,15 @@ const LoginContent = () => {
   useEffect(() => {
     // Show verified success message if redirected from verify page
     if (searchParams.get('verified') === 'true') {
-      setSuccessMsg(t('email_verified_success'))
+      setSuccessMsg(t('login.email_verified_success'))
     }
     // Show error if redirected from next-auth error callbacks
     const oauthError = searchParams.get('error')
     if (oauthError) {
       setError(
         oauthError === 'OAuthSignin' || oauthError === 'OAuthCallback'
-          ? t('error_google_oauth')
-          : t('error_auth_generic'),
+          ? t('login.error_google_oauth')
+          : t('login.error_auth_generic'),
       )
     }
   }, [searchParams, t])
@@ -55,17 +55,17 @@ const LoginContent = () => {
 
       if (result?.error) {
         if (result.error === 'CredentialsSignin') {
-          setError(t('error_invalid_credentials'))
+          setError(t('login.error_invalid_credentials'))
         } else {
           setError(result.error)
         }
       } else {
-        router.push('/')
+        router.push('/chats')
         router.refresh()
       }
     } catch (err: any) {
       console.error('An unexpected error occurred during login:', err)
-      setError(t('error_unexpected'))
+      setError(t('login.error_unexpected'))
     } finally {
       setLoading(false)
     }

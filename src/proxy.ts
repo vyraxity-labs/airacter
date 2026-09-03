@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
 import { verifyToken } from '@/lib/jwt'
-import { API_AUTH_ROUTES_PREFIX, API_ROUTES_PREFIX } from './auth.constants'
+import {
+  API_AUTH_ROUTES_PREFIX,
+  API_ROUTES_PREFIX,
+  LOGIN_PAGE,
+} from './auth.constants'
 import { Role } from './generated/prisma/enums'
 import { auth as nextAuthMiddleware } from '@/auth'
+import { authConfig } from './auth.config'
 
 export const proxy = nextAuthMiddleware(async (request) => {
   const { pathname } = request.nextUrl
@@ -84,7 +88,14 @@ export const proxy = nextAuthMiddleware(async (request) => {
   }
 
   // 2. Web Page Protection (NextAuth edge validation)
-  return (nextAuthMiddleware as any)(request)
+  const authorizedResult = authConfig.callbacks.authorized({
+    auth: request.auth,
+    request,
+  })
+  if (authorizedResult instanceof Response) return authorizedResult
+  if (!authorizedResult)
+    return NextResponse.redirect(new URL(LOGIN_PAGE, request.url))
+  return NextResponse.next()
 })
 
 export const config = {
